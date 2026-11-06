@@ -1,0 +1,1062 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Réviser La Nature</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+/* Layout : une colonne de lecture centrée ; accueil = plage de cours + grille de modules ; quiz = carte unique sous une barre fixe */
+:root{
+  --bg:#F1F3F8; --surface:#FFFFFF; --surface2:#E8ECF4; --fg:#161B2E; --muted:#59617A; --line:#D3DAE8;
+  --accent:#3B4BA8; --accent-fg:#FFFFFF; --accent-soft:#E2E6F8;
+  --ok:#17794A; --ok-soft:#DCF2E6; --bad:#B3321F; --bad-soft:#FBE3DE; --mid:#8A5A00; --mid-soft:#FAEDCB;
+  --lv1:#17794A; --lv2:#2B62C4; --lv3:#A15F08; --lv4:#7A3FB0;
+  --font-ui:'Hanken Grotesk',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font-read:'Source Serif 4',Georgia,'Times New Roman',serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1120; --surface:#171B30; --surface2:#20253F; --fg:#E9ECF7; --muted:#9AA3C0; --line:#2D3354;
+  --accent:#95A2FF; --accent-fg:#0E1120; --accent-soft:#232A55;
+  --ok:#5ED39A; --ok-soft:#14352A; --bad:#FF8E7B; --bad-soft:#3A1C19; --mid:#F0C25E; --mid-soft:#382C10;
+  --lv1:#5ED39A; --lv2:#7FA8F5; --lv3:#F0B15A; --lv4:#C19BF0; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1120; --surface:#171B30; --surface2:#20253F; --fg:#E9ECF7; --muted:#9AA3C0; --line:#2D3354;
+  --accent:#95A2FF; --accent-fg:#0E1120; --accent-soft:#232A55;
+  --ok:#5ED39A; --ok-soft:#14352A; --bad:#FF8E7B; --bad-soft:#3A1C19; --mid:#F0C25E; --mid-soft:#382C10;
+  --lv1:#5ED39A; --lv2:#7FA8F5; --lv3:#F0B15A; --lv4:#C19BF0; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-ui);font-size:16px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 40px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:30}
+.wrap{max-width:760px;margin:0 auto}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+h1,h2,h3{margin:0;text-wrap:balance;line-height:1.2}
+.eyebrow{font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.muted{color:var(--muted)}
+.btn{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:.65rem 1rem;font-weight:600;min-height:44px}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.sm{min-height:36px;padding:.35rem .75rem;font-size:.9rem}
+.row{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
+
+/* Accueil */
+.top{padding-top:calc(28px + env(safe-area-inset-top,0px));padding-bottom:18px}
+.top h1{font-family:var(--font-read);font-size:clamp(1.8rem,5vw,2.5rem);font-weight:600;margin-top:.25rem}
+.top p{margin:.5rem 0 0;max-width:52ch;color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
+.step h2{font-size:1.15rem;margin-bottom:.8rem}
+.sel{width:100%;padding:.7rem .8rem;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);min-height:46px}
+.seg{display:inline-flex;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;margin-top:.8rem}
+.seg button{border:0;background:var(--bg);padding:.5rem .9rem;font-weight:600;min-height:40px}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg)}
+.strip{display:flex;flex-wrap:wrap;gap:5px;margin-top:1rem}
+.strip button{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:.25rem .5rem;font-size:.8rem;font-weight:600;min-width:2.9rem;min-height:34px;color:var(--muted)}
+.strip button.in{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.strip button.end{background:var(--accent);color:var(--accent-fg)}
+.legend{font-size:.82rem;color:var(--muted);margin:.6rem 0 0}
+h2.sect{font-size:1.05rem;margin:28px 0 12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.mod{text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.mod:hover:not([disabled]){border-color:var(--accent)}
+.mod[disabled]{opacity:.5;cursor:not-allowed}
+.mod b{font-size:1.05rem}
+.mod .d{color:var(--muted);font-size:.9rem}
+.mod .m{margin-top:auto;padding-top:6px;font-size:.8rem;color:var(--muted);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.foot{margin-top:28px;padding-top:16px;border-top:1px solid var(--line);font-size:.88rem;color:var(--muted)}
+
+/* Réglages */
+.back{background:none;border:0;color:var(--accent);font-weight:600;padding:.4rem 0;min-height:44px}
+.lvls{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.lvl{text-align:left;border:1.5px solid var(--line);background:var(--bg);border-radius:12px;padding:12px;min-width:0}
+.lvl[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.lvl b{display:flex;align-items:center;gap:8px}
+.lvl small{display:block;color:var(--muted);margin-top:4px;line-height:1.35}
+.dot{width:10px;height:10px;border-radius:50%;flex:none}
+.l1{background:var(--lv1)}.l2{background:var(--lv2)}.l3{background:var(--lv3)}.l4{background:var(--lv4)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--line);background:var(--bg);border-radius:999px;padding:.4rem 1rem;font-weight:600;min-height:42px;min-width:52px}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.chip[disabled]{opacity:.4;cursor:not-allowed}
+.setup .card+.card{margin-top:14px}
+.setup h3{font-size:1rem;margin-bottom:.7rem}
+.note{font-size:.88rem;color:var(--muted);margin:.7rem 0 0}
+.banner{border-radius:10px;padding:.7rem .9rem;font-size:.9rem;background:var(--mid-soft);color:var(--fg);margin-bottom:12px;border:1px solid transparent}
+
+/* Quiz */
+.qbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);padding:10px 0 8px;border-bottom:1px solid var(--line)}
+.qbar .line1{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.qmeta{font-size:.88rem;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.score{font-variant-numeric:tabular-nums;font-weight:700}
+.prog{height:6px;border-radius:99px;background:var(--surface2);margin-top:8px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--accent);transition:width .25s}
+.confirm{background:var(--bad-soft);border-radius:10px;padding:.8rem 1rem;margin:12px 0 0}
+.confirm p{margin:0 0 .6rem}
+.q{margin-top:16px}
+.qhead{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:.7rem}
+.tag{font-size:.75rem;font-weight:600;border-radius:6px;padding:.1rem .5rem;background:var(--surface2);color:var(--muted)}
+.qtext{font-family:var(--font-read);font-size:1.3rem;line-height:1.4;margin:0 0 1rem;text-wrap:pretty}
+.opts{display:grid;gap:10px}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;border:1.5px solid var(--line);background:var(--bg);border-radius:12px;padding:.8rem .9rem;min-height:52px}
+.opt:hover:not([disabled]){border-color:var(--accent)}
+.opt .k{flex:none;width:1.7rem;height:1.7rem;border-radius:8px;background:var(--surface2);display:grid;place-items:center;font-weight:700;font-size:.85rem}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.opt.good{border-color:var(--ok);background:var(--ok-soft)}
+.opt.bad{border-color:var(--bad);background:var(--bad-soft)}
+.opt[disabled]{cursor:default}
+.vf{grid-template-columns:1fr 1fr}
+.vf .opt{justify-content:center;font-weight:700;font-size:1.1rem}
+textarea.ans,input.ans{width:100%;border:1.5px solid var(--line);background:var(--bg);border-radius:12px;padding:.75rem .9rem;resize:vertical}
+textarea.ans{min-height:110px;font-family:var(--font-read);font-size:1.05rem;line-height:1.45}
+.cloze{font-family:var(--font-read);font-size:1.2rem;line-height:2.3}
+input.blank{border:0;border-bottom:2px solid var(--accent);background:var(--accent-soft);border-radius:6px 6px 0 0;padding:.1rem .4rem;font-family:var(--font-ui);font-size:1rem;text-align:center;max-width:100%}
+.blank-ok{border-bottom:2px solid var(--ok);background:var(--ok-soft);padding:0 .35rem;border-radius:6px 6px 0 0;font-family:var(--font-ui);font-size:1rem;font-weight:600}
+.blank-bad{border-bottom:2px solid var(--bad);background:var(--bad-soft);padding:0 .35rem;border-radius:6px 6px 0 0;font-family:var(--font-ui);font-size:1rem;font-weight:600}
+.fix{font-family:var(--font-ui);font-size:.85rem;color:var(--ok);font-weight:600}
+.bank{display:flex;flex-wrap:wrap;gap:8px;margin-top:.5rem}
+.bank button{border:1.5px dashed var(--line);background:var(--bg);border-radius:8px;padding:.3rem .7rem;min-height:38px}
+.pairs{display:grid;gap:10px}
+.pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:10px;align-items:center}
+.pair .l{font-weight:600}
+.pair .ok{color:var(--ok);font-size:.88rem;grid-column:1/-1}
+.pair select{width:100%;min-width:0;padding:.55rem .6rem;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);min-height:44px}
+.pair select.good{border-color:var(--ok);background:var(--ok-soft)}
+.pair select.bad{border-color:var(--bad);background:var(--bad-soft)}
+@media (max-width:520px){.pair{grid-template-columns:1fr}}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:1.1rem;justify-content:space-between;align-items:center}
+.hint{color:var(--bad);font-size:.88rem;margin:.6rem 0 0}
+.fb{margin-top:16px;border-radius:12px;padding:14px 16px;border:1.5px solid var(--line)}
+.fb.ok{background:var(--ok-soft);border-color:var(--ok)}
+.fb.mid{background:var(--mid-soft);border-color:var(--mid)}
+.fb.ko{background:var(--bad-soft);border-color:var(--bad)}
+.fb .st{font-weight:700;display:flex;gap:8px;align-items:center;margin-bottom:.4rem}
+.fb.ok .st{color:var(--ok)}.fb.mid .st{color:var(--mid)}.fb.ko .st{color:var(--bad)}
+.fb p{margin:.35rem 0}
+.corr{margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.corr h4,.rev h4{margin:0 0 .35rem;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.corr p{margin:.3rem 0}
+.rev{margin-top:12px;background:var(--accent-soft);border-radius:12px;padding:14px 16px}
+.rev ul{margin:.2rem 0 0;padding:0;list-style:none;display:grid;gap:6px}
+.rev li{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.rev .pg{font-size:.82rem;font-weight:700;color:var(--accent)}
+.mine{background:var(--bg);border-radius:10px;padding:.7rem .9rem;margin:.4rem 0;font-family:var(--font-read);white-space:pre-wrap;overflow-wrap:anywhere}
+.override{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px;font-size:.88rem}
+.override .seg{margin-top:0}
+.checks{display:grid;gap:8px;margin:.5rem 0 0}
+.checks label{display:flex;gap:10px;align-items:flex-start;padding:.55rem .7rem;border:1px solid var(--line);border-radius:10px;background:var(--bg);cursor:pointer}
+.checks input{margin-top:.25rem;width:1.1rem;height:1.1rem;flex:none}
+
+/* Résultats */
+.res{text-align:center;padding:26px 18px}
+.big{font-family:var(--font-read);font-size:clamp(2.6rem,10vw,3.8rem);font-weight:600;font-variant-numeric:tabular-nums;line-height:1}
+.big small{font-size:.45em;color:var(--muted)}
+.bar{height:10px;border-radius:99px;background:var(--surface2);overflow:hidden;margin:16px auto 0;max-width:360px}
+.bar i{display:block;height:100%;background:var(--accent)}
+.res p{margin:.7rem 0 0}
+.todo{margin-top:16px;text-align:left}
+.todo ul{list-style:none;margin:.5rem 0 0;padding:0;display:grid;gap:8px}
+.todo li{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;padding:.6rem .8rem;border-radius:10px;background:var(--bg)}
+.todo .cnt{font-size:.78rem;font-weight:700;background:var(--bad-soft);color:var(--bad);border-radius:6px;padding:.05rem .45rem}
+details.miss{border:1px solid var(--line);border-radius:10px;background:var(--surface);margin-top:8px}
+details.miss summary{padding:.7rem .9rem;cursor:pointer;font-weight:600;list-style:none;display:flex;gap:8px;justify-content:space-between;align-items:baseline}
+details.miss summary::-webkit-details-marker{display:none}
+details.miss .in{padding:0 .9rem .9rem}
+details.miss .in p{margin:.35rem 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap"><div id="app"></div></div>
+
+<script>
+const BANK={};
+// QCM : [section, question, bonneReponse, [3 mauvaises], explication]
+BANK.qcm = {
+1: [
+['intro','Combien de sens principaux du mot « nature » le cours distingue-t-il ?','Trois',['Deux','Quatre','Cinq'],'Sens 1 : l’ensemble de l’Univers ; sens 2 : ce qui obéit à des lois nécessaires ; sens 3 : l’essence d’une chose.'],
+['intro','Que veut dire « polysémique » ?','Qui a plusieurs sens',['Qui n’a aucun sens','Qui est universel','Qui s’oppose à la culture'],'Le mot « nature » est polysémique : il a plusieurs sens différents (Univers, lois nécessaires, essence).'],
+['intro','Dans le sens 1, la nature s’oppose à…','La culture et à l’artificiel',['Au nécessaire','À l’essence','Aux lois de la physique'],'Sens 1 : réalité indépendante de l’activité humaine, qui s’oppose à la culture (arts, travail, technique, religion) et à l’artificiel. Exemple : une forêt vs une ville.'],
+['prob','Selon la problématique, notre rapport à la nature est…','Non neutre : il est aussi prescriptif (elle sert de norme)',['Purement descriptif','Purement scientifique','Sans conséquence morale'],'Notre rapport à la nature ne relève pas seulement de la description (ce qu’est la nature) mais de la prescription (ce qu’il est bon de faire). Ce qui est « naturel » est jugé légitime.'],
+['1.1','Que désigne le « kosmos » chez les Grecs ?','Un ordre harmonieux (et une beauté)',['Un désordre menaçant','La démesure','Une vertu de l’âme'],'Kosmos a un double sens : ornement/beauté ET ordre/organisation (Brague : la beauté résultant de l’ordre ; cosmétique).'],
+['1.1','Quel mythe illustre l’hubris (la démesure) ?','Icare',['Hadès','Poséidon','Éros'],'Icare (ailes brûlées), Arachné (changée en araignée) et Niobé illustrent la démesure, qui conduit au chaos.'],
+['1.1','Quelle vertu est fondamentale chez Platon ?','La tempérance',['L’hubris','Le chaos','La témérité'],'Tempérance (sôphrosunè) : maîtrise de soi, harmonie des désirs sous la conduite de la raison.'],
+['1.2','Pour Aristote, la nature est un principe interne de…','Mouvement et de repos',['Désordre et de chaos','Domination et d’exploitation','Habitude et de croyance'],'Aristote : la nature (phusis) est un principe interne de mouvement et de repos : chaque être possède en lui-même la source de son développement.'],
+['1.2','Que signifie « télos » ?','La fin, le but vers lequel tend un être',['L’origine d’un être','Le désordre du monde','La croyance née de l’habitude'],'Chaque être naturel est orienté vers une fin (télos) = sa forme accomplie et la plus excellente (graine → fleur).'],
+['1.3.1','Qui écrit : « Tout est bien sortant des mains de l’Auteur des choses, tout dégénère entre les mains de l’homme » ?','Rousseau',['Hume','Mill','Freud'],'Rousseau, Émile (1762). La nature sert de point de référence pour critiquer les dérives de la civilisation.'],
+['1.3.2','Quelle formule résume le darwinisme social de Spencer ?','« Survival of the fittest »',['« Homo homini lupus »','« Connais-toi toi-même »','« La Nature, ça n’existe pas ! »'],'Spencer étend la sélection au social avec la formule « survival of the fittest » (la survie du plus apte).'],
+['2.2','Qui veut nous rendre « comme maîtres et possesseurs de la nature » ?','Descartes',['Aristote','Rousseau','Platon'],'Descartes, Discours de la méthode : connaître les lois de la nature pour mieux agir sur elle, la dominer et l’exploiter.'],
+['3.1','Quel anthropologue a écrit « Par-delà nature et culture » (2005) ?','Philippe Descola',['William Cronon','Arne Næss','Alexandre Koyré'],'Philippe Descola, anthropologue, travaux auprès des Achuar d’Amazonie.'],
+['3.2.2','Quel écosystème espagnol a obtenu la personnalité juridique en 2022 ?','La Mar Menor',['Les Pyrénées','Le Tage','La forêt amazonienne'],'La Mar Menor, lagune du sud-est de l’Espagne, a reçu la personnalité juridique en 2022 : elle a des droits propres et des représentants peuvent agir en justice en son nom.'],
+],
+2: [
+['intro','Dans le sens 2 (lois nécessaires), la nature s’oppose…','Au contingent, à l’accident',['À la culture','À l’essence','À l’Univers'],'Sens 2 : ce qui obéit à des lois nécessaires (gravité, digestion, génétique) s’oppose au contingent (ce qui pourrait être autrement, comme les lois politiques).'],
+['intro','Pourquoi « l’homme s’oppose à la nature » et « l’homme fait partie de la nature » ne se contredisent-ils pas ?','Ce sont deux sens différents du mot « nature » (sens 1 et sens 2)',['Parce que l’un des deux énoncés est faux','Parce que le premier est scientifique et le second poétique','Parce que le cours change d’avis'],'Sens 1 : l’humain est opposé à la nature (il fait de la culture). Sens 2 : il fait partie de la nature (il obéit à la gravité comme le reste).'],
+['prob','Quelle contradiction le cours relève-t-il dans l’usage de la nature comme norme ?','On l’a invoquée pour justifier l’esclavage ET pour défendre des droits contre l’injustice',['Elle prouve que l’homme est bon','Elle oppose Grecs et Modernes','Elle sert seulement aux scientifiques'],'Au nom de la nature, on a justifié l’esclavage (infériorité « naturelle ») ET défendu des révoltes (droits naturels, désobéissance civile).'],
+['1.1','Que signifie « Connais-toi toi-même » chez Socrate, d’après le cours ?','Comprendre sa place dans le bel ordre du monde',['Pratiquer l’introspection psychologique','Dominer les autres','Se rendre maître de la nature'],'Sens non psychologique : comprends ta place dans le bel ordre (cosmos) et mène une vie conforme à celui-ci.'],
+['1.1','Dans l’âme platonicienne, quelle partie siège dans la tête et gouverne l’ensemble ?','La partie rationnelle (noûs)',['La partie irascible (thumos)','La partie désirante (epithumia)','La partie végétative'],'Rationnelle : tête, gouverner l’ensemble, rois-philosophes. Irascible : cœur, soldats. Désirante : ventre, producteurs.'],
+['1.1','À quelle classe de la cité correspond la partie irascible de l’âme ?','Les soldats',['Les rois-philosophes','Les producteurs / paysans','Les prêtres'],'Irascible (thumos) : cœur, courage et colère, doit soutenir la raison → les soldats.'],
+['1.2','Quelle est la fonction propre de l’homme selon Aristote ?','Une activité rationnelle',['La survie physique','La domination de la nature','La production de richesses'],'L’homme se distingue par la raison (réfléchir, délibérer, choisir) → sa fonction propre est une activité rationnelle.'],
+['1.2','Entre quels deux vices se situe le courage ?','Lâcheté (défaut) et témérité (excès)',['Avarice et prodigalité','Apathie et colère excessive','Rudesse et complaisance excessive'],'Courage = juste milieu entre lâcheté et témérité. Tempérance : insensibilité / débauche. Générosité : avarice / prodigalité.'],
+['1.3.1','Pour Rousseau, les arts et les sciences sont condamnés…','Pour leurs effets (luxe, oisiveté, hypocrisie), pas en eux-mêmes',['En eux-mêmes, car ils sont faux','Parce qu’ils sont trop difficiles','Parce qu’ils expliquent trop la nature'],'Le progrès intellectuel n’a pas rendu les hommes meilleurs mais plus corrompus : luxe, oisiveté, raffinement qui éloignent de la simplicité naturelle.'],
+['1.3.2','Que montre l’exemple de la phalène du bouleau ?','La sélection naturelle : les mieux adaptés survivent et transmettent leurs caractères',['L’harmonie parfaite du cosmos','Une finalité morale de la nature','L’anthropomorphisme de l’homme'],'Darwin : variations + sélection → adaptation. La nature met en avant sélection et différenciation, des mécanismes sans finalité morale.'],
+['2.1.1','Quel est l’argument central de Mill dans La Nature (1874) ?','Si le cours naturel était parfait, toute action humaine serait une ingérence inutile',['La nature est parfaite : imitons-la','La nature est une machine muette','L’homme est un loup pour l’homme'],'Or nous admirons les victoires de l’art sur la nature (ponts, digues, paratonnerres…) : il faut soumettre les voies de la nature et non leur obéir.'],
+['2.2','Que désigne Koyré par « le divorce » dans le monde moderne ?','Le divorce entre le monde des valeurs et le monde des faits',['Le divorce entre l’âme et le corps','Le divorce entre Grecs et Modernes','Le divorce entre science et religion'],'Rejet de toute considération de valeur, perfection, harmonie, sens ou fin : c’est exactement le problème être / devoir-être.'],
+['2.3.2','Pour Hume, la causalité est…','Une croyance produite par l’habitude',['Une loi nécessaire que l’on perçoit','Une déduction logique rigoureuse','Une force cachée que l’on observe'],'Nous ne percevons jamais la nécessité, seulement une répétition. La causalité est un instinct, impossible à prouver (ni déduction ni induction) : scepticisme.'],
+['3.1','Selon Descola, le naturalisme se caractérise par…','Une continuité physique et une discontinuité d’intériorité (même corps, âme différente)',['Une discontinuité physique et une continuité d’intériorité','Une continuité sur les deux plans','Une discontinuité sur les deux plans'],'Naturalisme : mêmes corps/biologie, mais seuls les humains ont une intériorité développée. Animisme : corps différents, même intériorité.'],
+],
+3: [
+['intro','Quel énoncé décrit correctement le sens 3 de la nature ?','Les propriétés qui définissent un être et le distinguent de ce qu’il n’est pas (principe d’identité)',['L’ensemble de l’Univers indépendant de l’homme','Ce qui obéit à des lois mathématiques nécessaires','Ce qui est apparu par l’action humaine volontaire'],'Sens 3 : l’essence d’une chose, ses propriétés physiques ou morales. Il permet de penser la limite : elle borne le champ des possibles (ex. être « de nature colérique »).'],
+['prob','Dans quelle opposition la problématique se résume-t-elle ?','Être (ce qui est, fait) / devoir-être (ce qui doit être, norme)',['Nature / hasard','Cosmos / chaos','Corps / âme'],'Toute la problématique : de « la nature est ainsi » à « il faut faire ainsi ». Elle revient chez Hume (critique de Spencer) et chez Koyré.'],
+['prob','Quelle est l’ambivalence de notre rapport à la nature ?','Nature = mon essence → je dois m’y conformer ; nature = extérieur → je dois la dépasser et la dominer',['Elle est à la fois belle et laide','Elle est à la fois ancienne et récente','Elle est à la fois divine et scientifique'],'Deux attitudes opposées : se conformer (nature-essence) ou la maîtriser (nature extérieure).'],
+['1.1','Quelle est la différence entre phusis et kosmos dans le tableau du cours ?','La phusis est plus dynamique (mouvement, évolutions) ; le kosmos désigne l’ordre achevé',['La phusis est le désordre, le kosmos l’ordre','La phusis est humaine, le kosmos divin','Il n’y a aucune différence'],'Phusis : principe organisé, interne (source, loi), manifesté et caché (Héraclite : « la physis aime à se cacher »). Kosmos : ordre achevé du monde.'],
+['1.1','Pourquoi les Grecs concluent-ils à un ordre naturel stable ?','Ils observent des régularités frappantes (saisons, marées, un chat engendre un chat)',['Ils pratiquent l’expérimentation mathématique','Ils lisent les lois de Newton','Ils refusent toute observation'],'Régularités → stabilité et constance → monde cohérent, intelligible, ordonné.'],
+['1.1','Que signifie l’idée que le cosmos a une dimension « axiologique » ?','Il fixe des valeurs : le Bien préserve l’ordre, le mal introduit déséquilibre et dérèglement',['Il est mesurable par les mathématiques','Il est dépourvu de sens','Il est une création humaine'],'« Axiologique » = qui concerne les valeurs. Le cosmos est vecteur de sens : il montre ce qui est bien et mal.'],
+['1.2','Que signifie le piège « juste milieu ≠ moyenne » ?','Le courage n’est pas un peu de peur : c’est la bonne réaction entre fuir et foncer sans réfléchir',['Il faut toujours choisir la moyenne','Le juste milieu n’existe pas','La vertu est un excès contrôlé'],'Le juste milieu est la bonne réaction, pas une quantité tiède. La vertu est une disposition stable acquise par l’habitude.'],
+['1.2','Quelle différence entre Platon et Aristote sur la nature comme norme ?','Platon : la norme vient de l’ordre du cosmos (place de chacun) ; Aristote : de l’intérieur de chaque être (sa fin, sa fonction)',['Platon : de l’intérieur de l’être ; Aristote : du cosmos','Aucun des deux n’y voit une norme','Les deux la tirent des lois mathématiques'],'Chez les deux la nature donne une norme, mais l’origine de la norme diffère : externe/ordre global (Platon) vs interne/fin propre (Aristote).'],
+['1.3.1','Quelle est l’origine de la « société du paraître » selon Rousseau ?','L’amour-propre : on se compare et on cherche l’approbation des autres',['L’amour de soi et la pitié','La rationalité scientifique pure','Le retour à l’état de nature'],'L’amour-propre pousse à briller, séduire, être reconnu plutôt qu’être vertueux : hypocrisie généralisée. « Le sauvage vit en lui-même ; l’homme sociable, toujours hors de lui… » (Discours sur l’inégalité, 1755).'],
+['1.3.2','Quelle conséquence sociale Spencer tire-t-il de la sélection naturelle ?','Le laisser-faire : aider les plus démunis contrarierait la sélection',['L’égalité obligatoire','L’assistance publique obligatoire','La redistribution des richesses'],'Il accepte l’assistance privée et volontaire mais refuse l’assistance publique et obligatoire. Darwinisme social = explication ET justification des inégalités.'],
+['1.3.2','Quelle critique Hume adresse-t-il (selon le cours) au darwinisme social ?','On ne peut pas déduire une norme morale de l’observation des faits (être → devoir-être)',['Il ignore les mathématiques','Il nie l’évolution','Il surestime la coopération'],'Le fait que la nature fonctionne par sélection ne suffit pas à justifier qu’elle doive régir la société.'],
+['2.1.2','Pourquoi la civilisation est-elle nécessaire, selon Freud ?','Les passions instinctives (agressivité) sont plus fortes que les intérêts rationnels',['Parce que l’homme est naturellement bon et pacifique','Parce que la nature est parfaite','Parce que la coopération suffit'],'La civilisation répond à la violence originaire par des contraintes et des interdits ; coût : renoncement pulsionnel, désirs refoulés ou transformés.'],
+['2.2','Qu’est-ce que la « géométrisation de l’espace » selon Koyré ?','Le remplacement de l’espace d’Aristote (lieux différenciés) par l’espace homogène et infini de la géométrie euclidienne',['Le calcul des distances entre planètes','L’invention du compas','La division de l’Univers en sphères'],'Destruction du Cosmos + géométrisation de l’espace : passage du cosmos fini et hiérarchisé à l’univers infini, homogène, sans centre.'],
+['2.4','Pourquoi le recours à la nature est-il « sélectif » à propos de l’homosexualité ?','De nombreux comportements homosexuels existent chez les animaux, et la fréquence ne prouve pas la valeur morale',['Parce que la nature interdit tout','Parce que la science n’a rien observé','Parce que la nature ne contient aucune règle'],'Le raisonnement « contre-nature » suppose que la nature contient des normes morales, orientées par des présupposés culturels.'],
+],
+4: [
+['intro','« Un être de nature colérique » relève de quel sens, et que permet-il de penser ?','Sens 3 (essence) ; il permet de penser la limite qui borne le champ des possibles',['Sens 1 ; il oppose nature et culture','Sens 2 ; il oppose nécessaire et contingent','Sens 3 ; il démontre que la nature est une machine'],'L’essence est un principe d’identité : ce qui définit un être en propre. Elle borne le champ des possibles.'],
+['prob','Pourquoi la nature ne peut-elle pas être un modèle par simple « imitation », selon les questions du cours ?','Parce qu’il faut savoir à quelle condition un fait naturel vaut comme norme, et ne pas projeter nos valeurs sur la nature',['Parce que la nature est trop complexe pour être observée','Parce que les Grecs l’interdisaient','Parce qu’elle n’existe que dans les livres'],'Questions : à quelle condition un fait peut-il valoir comme norme ? Ne projetons-nous pas nos valeurs ? Imiter la nature telle qu’elle est ou y trouver un principe pour juger et orienter nos actions ?'],
+['1.1','Quel est le « fil rouge » de la partie 1.1 ?','Chaos → Cosmos → Hubris (danger) → Sagesse/Tempérance (remède)',['Cosmos → Chaos → Sagesse → Hubris','Hubris → Chaos → Cosmos → Tempérance','Phusis → Mécanisme → Culture'],'Le monde est fragile, donc il faut rester à sa place. « Hubris ≠ sagesse = démesure » ; « sagesse → ne va pas au-dessus des règles du monde ».'],
+['1.1','Pourquoi les épicuriens s’opposent-ils à la « preuve cosmologique » ?','Pour eux le monde est une rencontre hasardeuse d’atomes : aucun ordre voulu ne prescrit quoi que ce soit',['Parce qu’ils niaient l’existence des atomes','Parce qu’ils croyaient au cosmos de Platon','Parce qu’ils voulaient dominer la nature'],'La preuve cosmologique de Dieu voit dans l’ordre du monde la preuve d’un créateur. Les épicuriens refusent cet ordre voulu : pas de norme qui en découle.'],
+['1.2','Pourquoi l’être « bon » est-il un critère d’évaluation interne chez Aristote ?','Parce que la norme est inscrite dans la nature de l’être lui-même (un bon cheval accomplit sa nature quand il galope)',['Parce qu’il est choisi par la société','Parce qu’il est mesuré par des lois mathématiques','Parce qu’il est imposé par un roi'],'La norme n’est pas extérieure : on évalue le réussi vs le défaillant à partir de la fonction propre de l’être.'],
+['1.2','Quelle est la conclusion du 1.2 à savoir reformuler ?','La nature est un modèle non parce qu’il faut imiter aveuglément ce qui existe, mais parce qu’elle permet de penser une norme interne d’accomplissement',['La nature est un modèle car il faut imiter les animaux','La nature n’est jamais un modèle','La nature est un modèle car elle est parfaite et immuable'],'Comprendre ce qu’un être est par nature → déterminer ce qu’il doit devenir : une vie rationnelle, équilibrée et vertueuse.'],
+['1.3.1','Pourquoi Rousseau ne dit-il pas « il faut retourner dans les bois » ?','Parce que l’état de nature est une mesure pour critiquer la société, pas un modèle à imiter directement',['Parce qu’il condamne la nature','Parce qu’il valorise les arts et les sciences','Parce que la forêt est trop dangereuse'],'La nature est un point de référence pour critiquer les dérives de la civilisation. Critique du cours : c’est une figure théorique idéalisée, difficilement applicable.'],
+['1.3.2','En quoi l’interprétation de Spencer est-elle « réductrice » selon le cours ?','Elle néglige la coopération et l’adaptation au milieu : Darwin (La filiation de l’homme) et Kropotkine montrent l’importance de l’entraide et des instincts sociaux',['Elle ignore la lutte pour l’existence','Elle nie la sélection naturelle','Elle utilise trop les mathématiques'],'Les premiers éléments de la morale viennent d’instincts sociaux sélectionnés car ils favorisent la survie collective.'],
+['2.1.1','Quel paradoxe Mill met-il en évidence ?','Faire de la nature un modèle est contradictoire avec l’éloge que nous faisons de la civilisation',['La nature est à la fois bonne et mauvaise','La civilisation est un retour à la nature','Les sciences condamnent la technique'],'Tout éloge de la civilisation, de l’art ou de l’invention revient à critiquer la nature. Même cultiver, bâtir, se vêtir sont des transformations de la nature.'],
+['2.1.2','Mill et Freud disent la même chose à deux échelles : lesquelles ?','Nature extérieure (inondations, foudre → techniques) et nature intérieure (pulsions → morale et lois)',['Nature animale et nature végétale','Nature ancienne et nature moderne','Nature visible et nature cachée'],'Dans les deux cas, la culture va contre la nature, donc la nature n’est pas un modèle.'],
+['2.2','Que devient la nature quand elle passe du statut de modèle à celui de matériau ?','Elle ne prescrit plus rien, elle explique : champ d’application de la technique',['Elle prescrit davantage de règles','Elle redevient un cosmos','Elle devient sacrée'],'« Une mécanique ne donne pas d’exemple : elle fonctionne, simplement. » La nature moderne ne prescrit rien.'],
+['2.3.2','Quelle différence entre les deux critiques de Hume (2.3.1 et 2.3.2) ?','Anthropomorphisme : on prête à la nature des intentions humaines ; causalité/habitude : on prend une répétition pour une nécessité',['La première est religieuse, la seconde mathématique','La première porte sur l’être/devoir-être, la seconde sur le cosmos','Ce sont deux noms de la même critique'],'Les deux aboutissent à : la valeur normative vient de nous, pas de la nature. Hume apparaît aussi en 1.3 (fait/norme) : trois usages à distinguer.'],
+['3.1','Pourquoi Descola conclut-il « La Nature, ça n’existe pas ! » ?','Parce que la séparation nature/culture est propre au naturalisme occidental moderne ; ailleurs elle n’existe pas',['Parce que la nature est une illusion de la perception','Parce que la science a prouvé que la nature n’existe pas','Parce que les Achuar détruisent la nature'],'Chez les peuples non occidentaux, animaux, plantes et rivières sont des êtres avec qui les humains ont des relations de continuité, d’échange, de parenté.'],
+['3.2.1','Quelle critique principale Cronon adresse-t-il à la wilderness ?','C’est une construction culturelle (romantisme américain du XIXe s.) alors que ces espaces ont été habités et aménagés',['Elle est trop polluée','Elle n’existe plus nulle part','Elle est une invention des Grecs'],'Idée de l’homme par essence incompatible avec la nature = produit d’une représentation culturelle. Protéger la nature contre l’homme renforce le dualisme.'],
+['3.2.2','Pourquoi parler de « capitalocène » plutôt que d’« anthropocène » ?','Parce que le responsable est un modèle économique (capitalisme industriel occidental), pas l’espèce humaine en général',['Parce que le capital est naturel','Parce que l’Anthropocène est une ère géologique inexistante','Parce que l’homme n’a aucun impact'],'« Anthropocène » attribue la crise à l’humanité en général et efface les responsabilités historiques, économiques, culturelles d’une culture précise.'],
+]
+};
+
+// Vrai/Faux : [section, affirmation, vrai?, explication]
+BANK.vf = {
+1: [
+['intro','La nature, au sens 1, désigne l’ensemble des êtres et des choses qui constituent l’Univers, indépendamment de l’activité humaine.',true,'C’est la définition du sens 1 : réalité matérielle indépendante de l’activité humaine.'],
+['intro','« Artificiel » désigne ce qui existe spontanément, sans intervention humaine.',false,'C’est l’inverse : l’artificiel est ce qui est apparu du fait de l’action humaine volontaire. Ce qui existe spontanément, c’est le naturel (sens 1).'],
+['intro','La gravité est un exemple du sens 2 de la nature (lois nécessaires).',true,'Sens 2 : gravité, digestion, génétique, lois de la nature établies par les sciences naturelles.'],
+['prob','Dans la problématique, on dit que « contre nature » est un jugement de rejet.',true,'Ce qui est « naturel » est légitime, ce qui est « contre nature » est rejeté : la nature devient une norme.'],
+['1.1','Le chaos désigne, chez Hésiode, un état d’ordre parfait.',false,'Le chaos est une ouverture béante, indétermination, indistinction : ni ordre, ni intelligibilité, ni beauté. Chez Hésiode, au commencement il y a Chaos.'],
+['1.1','Pour les Grecs, le cosmos est le monde ordonné, beau et harmonieux.',true,'Kosmos : double sens ornement/beauté ET ordre/organisation.'],
+['1.1','La sagesse consiste à dépasser les limites de sa condition.',false,'C’est l’hubris (la démesure). La sagesse consiste à reconnaître ses limites et à s’y conformer.'],
+['1.2','Pour Aristote, chaque être naturel est orienté vers une fin.',true,'Les êtres naturels sont orientés vers un développement correspondant à ce qu’ils sont (graine → fleur).'],
+['1.2','Pour Aristote, la vertu est une disposition acquise par l’habitude.',true,'La vertu est une disposition stable, acquise par l’habitude, qui suppose un juste milieu.'],
+['1.3.1','Rousseau pense que le progrès des arts et des sciences a rendu les hommes meilleurs.',false,'Au contraire : le progrès intellectuel n’a pas rendu les hommes meilleurs mais plus corrompus (Discours sur les sciences et les arts).'],
+['1.3.2','Darwin décrit la nature comme dynamique, historique et évolutive.',true,'À partir du XIXe siècle, la nature n’est plus un ordre fixe et hiérarchisé : les espèces se transforment (variations + sélection).'],
+['2.2','Pour Descartes, la nature est comparable à une machine soumise à des lois mécaniques.',true,'Mécanisme cartésien : res extensa, système d’engrenages (le canard mécanique du cours).'],
+],
+2: [
+['intro','Dans le sens 2, l’humain est opposé à la nature.',false,'C’est le sens 1. Au sens 2, l’humain fait partie de la nature : il obéit à la gravité comme le reste.'],
+['intro','Le nécessaire est ce qui ne peut pas être autrement ; le contingent est ce qui pourrait être autrement.',true,'Les lois de la nature sont nécessaires ; les lois politiques sont contingentes.'],
+['prob','La notion de nature a servi à justifier l’esclavage et aussi à défendre des droits contre l’injustice.',true,'Contradiction relevée dans la problématique : infériorité « naturelle » d’un côté, droits naturels et désobéissance civile de l’autre.'],
+['1.1','Dans l’âme platonicienne, la partie désirante siège dans le ventre et doit être maîtrisée.',true,'Désirante (epithumia) : le ventre, désirs, doivent être maîtrisés → classe des producteurs/paysans.'],
+['1.1','« Connais-toi toi-même » invite, selon le cours, à une introspection psychologique.',false,'Sens non psychologique : comprends ta place dans le bel ordre et mène une vie conforme à celui-ci.'],
+['1.2','L’eudaimonia est, chez Aristote, l’accomplissement de la fonction propre de l’homme (vie bonne).',true,'Vie bonne (eudaimonia) = accomplissement de la fonction propre de l’homme : une activité rationnelle.'],
+['1.2','Le courage est un excès : c’est la témérité.',false,'Le courage est le juste milieu. L’excès est la témérité, le défaut est la lâcheté.'],
+['1.3.1','Pour Rousseau, l’homme civilisé a des désirs artificiels et infinis, tandis que l’homme naturel a des besoins limités.',true,'« L’homme naturel a des besoins limités, l’homme civilisé des désirs artificiels et infinis. »'],
+['1.3.2','Selon Spencer, aider les plus démunis par l’État est la bonne politique.',false,'Spencer refuse l’assistance publique obligatoire (laisser-faire), même s’il accepte l’assistance privée et volontaire.'],
+['2.1.2','Freud pense que l’homme est naturellement bon et pacifique.',false,'Au contraire : l’homme porte une forte charge d’agressivité (« homo homini lupus »).'],
+['2.3.1','L’anthropomorphisme consiste à attribuer à la nature des intentions et des finalités humaines.',true,'Hume : l’homme préfère rapprocher l’inconnu de ce qu’il connaît (lui-même) plutôt que d’admettre l’absence de sens.'],
+['3.1','Chez les Achuar, les animaux sont des partenaires sociaux.',true,'Pour Descola, chez les Achuar il n’y a pas de séparation nature/culture : continuité, échange, parenté.'],
+],
+3: [
+['intro','Dans le sens 1, la forêt s’oppose à la ville comme le naturel à l’artificiel.',true,'C’est l’exemple du cours pour le sens 1 : la ville est le résultat d’une action humaine volontaire.'],
+['intro','Le sens 2 de la nature est apparu surtout après la modernité (XVIe s.).',true,'Totalité abstraite, objective, rationnelle, en langage mathématique, soumise au déterminisme causal.'],
+['prob','La nature est un modèle simplement parce qu’elle est observable.',false,'La question est précisément de savoir à quelle condition un fait naturel peut valoir comme norme : passage de l’être au devoir-être.'],
+['1.1','Platon dit dans le Gorgias que ciel, terre, dieux et hommes sont liés par amitié et justice, d’où le mot « cosmos ».',true,'Cosmos = arrangement, et non dérangement ou dérèglement.'],
+['1.1','Chez Platon, la tempérance consiste à ce que chaque partie de l’âme reste à sa place et remplisse sa fonction.',true,'Ordre respecté → âme harmonieuse, individu juste. Désirs qui dominent → désordre intérieur.'],
+['1.2','Pour Aristote comme pour Platon, la norme vient de l’ordre global du cosmos.',false,'Chez Platon : ordre du cosmos (place de chacun). Chez Aristote : l’intérieur de chaque être (sa fin, sa fonction).'],
+['1.2','Le « juste milieu » aristotélicien est une moyenne entre deux extrêmes.',false,'Piège : juste milieu ≠ moyenne ni tiédeur. Le courage n’est pas un peu de peur mais la bonne réaction.'],
+['1.3.1','Pour Rousseau, il faut retourner vivre dans l’état de nature.',false,'L’état de nature sert de mesure pour juger ce que la société a abîmé, pas de modèle à imiter directement.'],
+['1.3.2','L’expression des émotions chez l’homme et les animaux (Darwin, 1872) montre une continuité entre l’homme et le vivant.',true,'Sourire, rougir, exprimer la peur ont une origine naturelle et évolutive. La nature acquiert une fonction heuristique.'],
+['2.1.1','Pour Mill, les ponts, les digues et les paratonnerres sont des victoires de l’art sur la nature que nous admirons.',true,'Si la nature était parfaite, toute action humaine serait une ingérence inutile.'],
+['2.2','Pour la science moderne, les qualités secondes (couleurs, odeurs) sont pleinement objectives et mesurables.',false,'Les qualités secondes (couleurs, odeurs, saveurs, chaleur ressentie) sont subjectives, liées à notre perception ; elles sont exclues de la connaissance scientifique.'],
+['2.4','Dire d’une hiérarchie qu’elle est « naturelle » lui donne une apparence de nécessité et empêche qu’elle soit interrogée.',true,'La nature devient un instrument de légitimation, non neutre, qui sert à imposer des normes et exclure.'],
+],
+4: [
+['intro','Le sens 2 de la nature s’oppose au sens 1 car il inclut l’humain, alors que le sens 1 l’oppose à la nature.',true,'Dans le sens 1 l’humain s’oppose à la nature (culture) ; dans le sens 2 il en fait partie (lois nécessaires). Deux sens d’un même mot.'],
+['prob','La nature comme norme est neutre car elle relève seulement de la description.',false,'Notre rapport à la nature n’est pas neutre : il relève aussi de la prescription.'],
+['1.1','L’hubris conduit au chaos parce qu’elle refuse sa place dans l’ordre du monde.',true,'Hubris : dépasser les limites de sa condition ; elle conduit au chaos (Icare, Arachné, Niobé).'],
+['1.1','Pour Avez, le chaos est seulement une origine passée du monde, sans menace actuelle.',false,'Le chaos est un désordre toujours menaçant : pas seulement une origine, mais une menace toujours actuelle.'],
+['1.2','Pour Aristote, juger un cheval « bon » suppose une norme extérieure fixée par la société.',false,'La norme est inscrite dans la nature de l’être (un bon cheval accomplit sa nature quand il galope) : critère d’évaluation interne.'],
+['1.3.2','Le darwinisme social est à la fois une explication et une justification des inégalités.',true,'Les inégalités sont présentées comme résultat naturel (adaptation supérieure) → elles sont justifiées, naturalisées.'],
+['1.3.2','Pour critiquer Rousseau, le cours dit que l’homme naturel bon, libre, heureux est une figure théorique, pas une réalité historique vérifiable.',true,'Idéalisation de la nature ; opposition trop forte nature/culture : la société est aussi source de droit, morale, liberté politique.'],
+['2.1.2','Pour Freud, la civilisation est un prolongement de la nature humaine primitive.',false,'La civilisation ne prolonge pas la nature humaine : elle la corrige et la contraint. « Aimer son prochain comme soi-même » est contraire à la nature primitive.'],
+['2.2','Pour Koyré, la destruction du Cosmos et la géométrisation de l’espace entraînent le rejet des notions de valeur, de perfection et de fin.',true,'« Le divorce total entre le monde des valeurs et le monde des faits ».'],
+['2.3.2','Hume affirme que nous percevons directement la nécessité qui relie la cause et l’effet.',false,'Nous ne percevons jamais la nécessité : seulement des faits qui se succèdent régulièrement. La causalité est une croyance par habitude.'],
+['3.1','Chez Descola, le totémisme se caractérise par une continuité à la fois de physicalité et d’intériorité.',true,'Totémisme : humains et non-humains d’un même totem partagent même essence et origine (Aborigènes australiens).'],
+['3.2.2','Reconnaître des droits à la nature suppose de lui attribuer une conscience humaine.',false,'Non : certains écosystèmes doivent être protégés pour eux-mêmes et défendus juridiquement, sans conscience humaine. Argument historique : l’extension progressive des sujets de droit.'],
+]
+};
+
+// Questions simples : [section, question, réponse modèle, groupes de mots-clés [[synonymes],...], seuil (optionnel)]
+BANK.simple = {
+1: [
+['intro','Quels sont les trois sens du mot « nature » dans le cours ?','1) L’ensemble de l’Univers (indépendant de l’homme) ; 2) ce qui obéit à des lois nécessaires ; 3) l’essence d’une chose.',[['univers','ensemble des etres','monde physique'],['lois','necessaire','necessite'],['essence','propriete','principe d identite']],3],
+['prob','Quelle question centrale pose le cours dans sa problématique ?','La nature peut-elle être un modèle (une norme pour nos actions) ?',[['modele','norme']],1],
+['1.1','Comment les Grecs appellent-ils l’ordre et la beauté du monde ?','Le cosmos (kosmos).',[['cosmos','kosmos']],1],
+['1.1','Comment s’appelle la démesure qui consiste à dépasser les limites de sa condition ?','L’hubris.',[['hubris']],1],
+['1.2','Quel philosophe grec définit la nature comme principe interne de mouvement et de repos ?','Aristote.',[['aristote']],1],
+['1.3.1','Quel philosophe affirme que le progrès des arts et des sciences a corrompu les hommes ?','Rousseau (Discours sur les sciences et les arts).',[['rousseau']],1],
+['1.3.2','Quel auteur a formulé « survival of the fittest » dans le domaine social ?','Herbert Spencer (darwinisme social).',[['spencer']],1],
+['2.2','Quel penseur parle de « maîtres et possesseurs de la nature » ?','Descartes.',[['descartes']],1],
+['3.2.2','Quel est le nom de la lagune espagnole qui a reçu la personnalité juridique en 2022 ?','La Mar Menor.',[['mar menor']],1],
+],
+2: [
+['intro','Quelle différence entre le contingent et le nécessaire ?','Le nécessaire ne peut pas être autrement (lois de la nature) ; le contingent pourrait être autrement (lois politiques, accident).',[['pas etre autrement','ne peut pas','impossible autrement','toujours'],['pourrait etre autrement','peut etre autrement','accident','politique']],2],
+['prob','Quelle distinction la problématique fait-elle entre description et prescription ?','Description : ce qu’est la nature ; prescription : ce qu’il est bon de faire (la nature comme norme).',[['description','ce qu est','fait'],['prescription','norme','ce qu il faut','devoir','bon de faire']],2],
+['1.1','Quelles sont les trois parties de l’âme chez Platon ?','Rationnelle (noûs), irascible (thumos) et désirante (epithumia).',[['rationnelle','raison','nous'],['irascible','thumos','courage'],['desirante','epithumia','desir']],3],
+['1.1','Quelle est la fonction de la partie rationnelle de l’âme dans la cité de Platon ?','Gouverner l’ensemble : elle correspond aux rois-philosophes.',[['gouvern','diriger','commander'],['roi','philosophe']],1],
+['1.2','Qu’appelle-t-on « eudaimonia » chez Aristote ?','La vie bonne : l’accomplissement de la fonction propre de l’homme (activité rationnelle).',[['vie bonne','bonheur','accomplissement'],['fonction','raison','rationnel']],1],
+['1.3.1','Quelle citation de Rousseau (Discours sur l’inégalité) oppose le sauvage et l’homme sociable ?','« Le sauvage vit en lui-même ; l’homme sociable, toujours hors de lui, ne sait vivre que dans l’opinion des autres. »',[['sauvage'],['opinion','autres','regard','dehors','hors de lui']],2],
+['1.3.2','Quelle est la phalène du bouleau, et à quoi sert-elle dans le cours ?','Un exemple de sélection naturelle (adaptation de l’espèce à son milieu).',[['selection'],['adapt','environnement','milieu','survi']],1],
+['2.1.1','Citez deux exemples de victoires de l’art sur la nature cités par Mill.','Ponts, assèchement des marais, puits, paratonnerres, digues, jetées…',[['pont','marais','puits','paratonnerre','digue','jetee','foudre','inondation'],['pont','marais','puits','paratonnerre','digue','jetee','foudre','inondation']],1],
+['2.1.2','Que signifie « Homo homini lupus » dans le cours ?','L’homme est un loup pour l’homme : l’agressivité naturelle est une menace permanente pour la vie en société.',[['loup'],['agress','menace','violence','dominat','rivalit']],1],
+['2.3.1','Qu’est-ce que l’anthropomorphisme selon Hume ?','Attribuer à la nature des caractéristiques humaines (intentions, volontés, finalités).',[['attribu','pret','projet'],['humain','intention','volonte','finalite']],2],
+],
+3: [
+['intro','Pourquoi dire que l’humain est « opposé à la nature » au sens 1 mais « fait partie de la nature » au sens 2 n’est pas contradictoire ?','Parce que ce sont deux sens différents du même mot (polysémie).',[['deux sens','sens differents','polysem','pas le meme sens','meme mot']],1],
+['1.1','Pourquoi le cosmos est-il « vecteur de sens » pour les Grecs ?','Parce qu’il montre ce qui est bien et mal : le Bien préserve l’ordre, le mal introduit déséquilibre et dérèglement ; le sage mène une vie conforme à la nature.',[['bien','mal','valeur','axiolog','norme'],['ordre','equilibre','harmonie']],2],
+['1.1','Qu’est-ce que la tempérance chez Platon et en quoi reproduit-elle l’ordre du monde ?','Chaque partie de l’âme reste à sa place sans empiéter sur les autres : l’âme harmonieuse reproduit l’ordre du cosmos.',[['place','chacun','fonction'],['harmon','ordre','equilibre'],['ame','desir','raison']],2],
+['1.2','Pourquoi Aristote dit-il que la nature est « intelligible et finalisée » ?','Comprendre un être, c’est comprendre ce vers quoi il tend (sa fin, sa fonction propre).',[['fin','telos','but','finalit'],['fonction','tend','intelligible','comprendre']],1],
+['1.2','Citez trois vertus avec leurs vices (défaut et excès) selon Aristote.','Ex. : lâcheté – courage – témérité ; avarice – générosité – prodigalité ; insensibilité – tempérance – débauche ; apathie – douceur – colère excessive ; fausse modestie – véracité – fanfaronnade ; rudesse – amabilité – complaisance excessive.',[['courage','temperance','generosite','douceur','veracite','amabilite'],['lachete','temerite','avarice','prodigalite','insensibilite','debauche','apathie','colere','modestie','fanfaron','rudesse','complaisance'],['courage','temperance','generosite','douceur','veracite','amabilite']],2],
+['1.3.2','Quelles sont les deux critiques majeures du darwinisme social dans le cours ?','1) On ne peut pas déduire une norme morale des faits (Hume) ; 2) cela naturalise les inégalités et néglige l’entraide (Darwin, Kropotkine).',[['norme','fait','hume','etre','devoir'],['naturalis','inegalit','entraide','cooperation','kropotkine','reducteur']],2],
+['2.1.2','Quel est le coût de la civilisation pour Freud ?','Le renoncement pulsionnel : une tension interne, les désirs sont refoulés ou transformés.',[['renoncement','refoul','pulsion','tension','frustration']],1],
+['2.2','Quelles sont les trois propriétés par lesquelles la nature est intelligible chez Descartes ?','L’étendue, la figure et le mouvement.',[['etendue'],['figure'],['mouvement']],3],
+['3.1','Quelles sont les quatre ontologies de Descola ?','Naturalisme, animisme, totémisme, analogisme.',[['naturalisme'],['animisme'],['totemisme'],['analogisme']],4],
+],
+4: [
+['prob','Pourquoi la problématique dit-elle que « l’être / devoir-être » est le fil de tout le cours ?','Parce qu’on se demande si l’on peut passer de « la nature est ainsi » (fait) à « il faut faire ainsi » (norme) ; ce passage est critiqué par Hume et Koyré.',[['fait','etre','description','ce qui est'],['norme','devoir','valeur','prescri']],2],
+['1.1','Pourquoi dit-on que l’ordre est « une conquête sur le chaos » dans la pensée grecque ?','Parce que le chaos est une menace toujours actuelle ; Zeus fonde l’Olympe en divisant les régions du monde, et chacun doit rester dans son royaume sinon le désordre ressurgit.',[['chaos','desordre','menace'],['zeus','olympe','place','royaume','division','region']],2],
+['1.2','En quoi la conclusion du 1.2 refuse-t-elle de dire qu’il faut « imiter aveuglément » la nature ?','La nature sert de modèle parce qu’elle permet de penser une norme interne d’accomplissement : on comprend ce qu’un être est par nature pour déterminer ce qu’il doit devenir (vie rationnelle, équilibrée, vertueuse).',[['norme interne','interne','accomplissement','fonction','fin'],['devenir','vertu','rationnel','equilibr','nature de l etre','ce qu il est']],2],
+['1.3.1','Comment Rousseau peut-il utiliser la nature sans prôner un retour en arrière ?','Il utilise l’état de nature comme mesure/point de référence pour critiquer les dérives de la civilisation, pas comme modèle à imiter directement.',[['mesure','reference','critique','critiquer','juger'],['pas imiter','ne dit pas','retourner','refuse','sans retour','modele critique']],1],
+['1.3.2','Pourquoi la critique de Rousseau (idéalisation de la nature) peut-elle aussi se retourner contre sa pensée ?','L’homme naturel bon est une figure théorique, non une réalité historique ; l’opposition nature/culture est trop forte (la société est aussi source de droit, de morale, de liberté) ; état originel impossible à retrouver.',[['theorique','idealis','figure','fiction','vrifiable','historique'],['droit','morale','liberte','applicable','impossible','societe']],2],
+['2.2','En quoi le passage de l’univers antique à l’univers moderne transforme-t-il le statut de la nature ?','De modèle (norme à contempler et imiter) à matériau (objet à maîtriser et exploiter) ; cosmos fini et hiérarchisé → univers infini, homogène ; finalité → causes et lois mathématiques.',[['modele','norme','contempl'],['materiau','objet','maitr','exploit','technique'],['mecan','machine','loi','cause']],2],
+['2.3.2','Pourquoi la critique de Hume sur la causalité fragilise-t-elle l’idée de nature-modèle ?','Pour imiter la nature il faut supposer un ordre stable et intelligible ; or cet ordre vient de notre habitude et de notre besoin psychologique de régularité, pas d’une nécessité perçue : on imite alors ses propres projections.',[['habitude','regularit','repetition','croyance'],['projection','image','besoin','psycholog','confond','miroir']],2],
+['2.4','Pourquoi dire que « naturel ≠ bon » ?','Ce qui est fréquent ou naturel n’est pas pour autant moralement légitime : ce raisonnement est sélectif et orienté par des présupposés culturels (ex. « contre-nature »).',[['frequent','naturel','majoritaire'],['moral','legitim','bon','valeur','presuppos','culturel']],2],
+['3.2.2','Pourquoi le cours parle-t-il d’un « déplacement majeur » dans la protection de la nature ?','On ne la protège plus seulement parce qu’elle est utile, mais parce qu’elle a une valeur qui excède sa fonction économique ou utilitaire : la nature devient un partenaire moral et juridique.',[['utile','utilit','economique','fonction'],['valeur','intrinsec','droit','juridique','partenaire','moral']],2],
+],
+};
+
+// Définitions : [section, terme, définition modèle, groupes de mots-clés, seuil (optionnel)]
+BANK.def = {
+1: [
+['intro','Culture','Ensemble des activités proprement humaines (arts, travail, technique, religion), relevant de l’apprentissage et de la transmission (inné/acquis).',[['activite','humain'],['art','travail','technique','religion','apprentissage','transmission','acquis']],2],
+['intro','Polysémique','Qui a plusieurs sens.',[['plusieurs'],['sens']],2],
+['intro','Nécessaire','Ce qui ne peut pas être autrement (lois de la nature).',[['pas','autrement','impossible','toujours']],1],
+['intro','Contingent','Ce qui pourrait être autrement (ex. les lois politiques).',[['autrement','accident','peut etre','pourrait']],1],
+['1.1','Hubris','Démesure : dépasser les limites de sa condition, refuser sa place dans l’ordre du monde ; elle conduit au chaos.',[['mesure','depasser','limite','exces'],['place','ordre','condition','chaos']],1],
+['1.1','Kosmos','Ordre et beauté du monde : univers harmonieux où chaque élément occupe une place déterminée.',[['ordre','organisation','harmon'],['beaute','ornement','place','equilibre']],1],
+['1.2','Télos','La fin vers laquelle tend un être : sa forme accomplie et la plus excellente.',[['fin','but','finalit'],['accompli','tend','excellent','forme']],1],
+['3.1','Naturalisme (Descola)','Ontologie occidentale moderne : continuité physique (mêmes corps) mais discontinuité d’intériorité ; la nature est un domaine objectif, extérieur, que la science connaît et exploite.',[['corps','physi','continuit'],['ame','interior','discontinu','difference'],['occident','moderne','objectif','exterieur','science']],2],
+],
+2: [
+['intro','Artificiel','Ce qui est apparu du fait de l’action humaine, résultat d’un processus volontaire qui transforme ce qui existe déjà pour produire des objets ou des espaces utiles.',[['action','humain','homme'],['volontaire','transforme','produire','utile','objets']],2],
+['1.1','Phusis','Principe organisé et structurant : ce qui apparaît et ce qui rend possible l’existence des choses (leur principe interne, leur source, leur loi) ; plus dynamique que le cosmos.',[['principe','source','loi','interne'],['mouvement','dynamique','evolution','processus','apparait','existence']],1],
+['1.1','Chaos','Ouverture béante, indétermination, indistinction : ni ordre, ni intelligibilité, ni beauté ; désordre toujours menaçant.',[['desordre','indetermin','indistinct','beant','ni ordre'],['menac','ordre','beaute','intelligib']],1],
+['1.1','Tempérance (sôphrosunè)','Maîtrise de soi, harmonie des désirs sous la conduite de la raison ; vertu fondamentale chez Platon.',[['maitrise','harmon','desir'],['raison','platon','soi']],1],
+['1.2','Eudaimonia','La vie bonne : accomplissement de la fonction propre de l’homme (exercer sa raison).',[['vie bonne','bonheur','accomplissement'],['fonction','raison','rationnel']],1],
+['1.2','Vertu (arétè) chez Aristote','Excellence avec laquelle un être réalise sa fonction ; pour l’homme, disposition stable acquise par l’habitude, juste milieu entre deux vices.',[['excellence','fonction','disposition'],['juste milieu','habitude','vice','stable']],2],
+['2.3.1','Anthropomorphisme','Attribuer à la nature des caractéristiques humaines (intentions, volontés, finalités).',[['attribu','pret','projet'],['humain','intention','volonte','finalite']],2],
+['3.2','Arraisonnement (Gestell)','Mise en ressource de la nature par la technique moderne : la nature n’est plus qu’un stock disponible, une réserve à exploiter, organiser, rendre disponible.',[['ressource','stock','reserve','exploit','disponible'],['technique','nature','utilite','rentab']],1],
+],
+3: [
+['intro','Essence (sens 3 de la nature)','Caractéristiques et propriétés physiques ou morales d’un être : principe d’identité, ce qui le définit en propre et le distingue de ce qu’il n’est pas ; permet de penser la limite.',[['propriete','caracteristique','definit'],['identit','distingue','limite','en propre']],1],
+['1.1','Sagesse (chez les Grecs)','Reconnaître ses limites et s’y conformer : mesure, retenue, équilibre, accord avec l’organisation du réel ; opposée à l’hubris.',[['limite','mesure','retenue','equilibre'],['conform','accord','place','ordre']],1],
+['1.3.2','Sélection naturelle','Mécanisme par lequel les individus présentant des traits avantageux survivent et se reproduisent davantage ; les mieux adaptés transmettent leurs caractères, ce qui transforme les espèces.',[['avantage','adapt','mieux'],['surviv','reprod','transmet','transform','lutte']],2],
+['1.3.2','Darwinisme social','Extension de la sélection naturelle à la société (Spencer) : les inégalités sont un résultat naturel de la concurrence ; le laisser-faire est préférable à l’assistance publique ; explication ET justification des inégalités.',[['spencer','societe','social','concurrence','selection'],['inegalit','laisser','justif','naturel','legitim']],2],
+['2.2','Mécanisme','Conception moderne de la nature comme machine sans finalité ni intention, régie par des rapports de cause à effet et des lois mathématiques universelles (nature quantifiable, mesurable, prévisible).',[['machine','mecani'],['cause','loi','mathemat','mesur','sans fin','finalit']],2],
+['2.2','Res extensa / res cogitans (Descartes)','Res cogitans : substance pensante (l’homme) ; res extensa : substance étendue (la nature), soumise aux lois mécaniques et privée d’intériorité.',[['pensante','pensee','homme','esprit'],['etendue','nature','mecani','materiel']],2],
+['2.3.2','Causalité selon Hume','Une croyance produite par l’habitude : on ne perçoit jamais de nécessité, seulement des faits qui se succèdent régulièrement ; impossible à prouver (ni par déduction ni par induction).',[['habitude','repetition','croyance'],['necessite','succede','regulier','jamais','prouver','scepticisme']],1],
+['2.4','Essentialisation','Réduire un individu ou un groupe à une essence naturelle fixe, en oubliant la part historique, sociale et culturelle.',[['reduire','fige','fixe','essence'],['groupe','individu','histoire','social','culturel']],1],
+['3.2.1','Wilderness','Idée d’une nature sauvage, pure et intacte, à préserver de toute présence humaine ; pour Cronon, une construction culturelle (romantisme américain du XIXe siècle).',[['sauvage','pure','intact','vierge'],['construction','culturel','romantique','cronon','humain']],1],
+],
+4: [
+['prob','Être / devoir-être','Distinction entre ce qui est (fait, description) et ce qui doit être (norme, valeur) : on ne passe pas de « la nature est ainsi » à « il faut faire ainsi ».',[['fait','ce qui est','description'],['norme','valeur','doit','prescri','devoir']],2],
+['1.1','Rapport axiologique (cosmos)','Rapport qui fixe des valeurs : l’agencement du monde exprime ce qui est bien (préserver l’ordre) et mal (introduire déséquilibre et dérèglement).',[['valeur','bien','mal'],['ordre','agencement','equilibre']],2],
+['1.2','Juste milieu (Aristote)','Équilibre entre deux vices (défaut et excès) ; ce n’est pas une moyenne tiède mais la bonne réaction, qui constitue la vertu.',[['vice','exces','defaut','extreme'],['vertu','bonne reaction','equilibre','pas une moyenne','pas la moyenne','tiede']],2],
+['1.3.1','Amour-propre (Rousseau)','Passion sociale qui pousse à se comparer aux autres et à chercher leur approbation ; origine de la société du paraître et de l’hypocrisie.',[['compar','autres','approbation','regard','opinion'],['paraitre','hypocrisie','social','brill','distinction']],2],
+['2.1.2','Renoncement pulsionnel','Le fait que la civilisation contraigne les pulsions agressives et sexuelles par des interdits ; les désirs ne disparaissent pas, ils sont refoulés ou transformés, d’où une tension interne.',[['pulsion','desir','agress','sexuel'],['interdit','refoul','contrainte','tension','civilisation']],2],
+['2.2','Qualités secondes','Qualités subjectives liées à notre perception (couleurs, odeurs, saveurs, chaleur ressentie) : exclues de la connaissance scientifique moderne car non mesurables.',[['subjectif','perception','couleur','odeur','saveur','chaleur'],['mesur','exclu','scientifique','science']],2],
+['3.1','Animisme (Descola)','Ontologie où humains et non-humains ont la même intériorité (intentions, émotions, points de vue) mais des corps différents ; ex. peuples amazoniens.',[['interior','ame','meme','continuit','intention','point de vue'],['corps','different','discontinu','amazon']],2],
+['3.2.2','Deep ecology (Arne Næss)','Écologie profonde : les êtres vivants, humains et non-humains, ont une valeur intrinsèque indépendante de leur utilité ; l’homme n’est pas le centre ni la mesure de toute chose (critique de l’anthropocentrisme).',[['valeur intrinsec','intrins','independant','dignit','propre'],['anthropocentr','centre','mesure','utilit','element','biosphere']],2],
+],
+};
+
+// Réflexion : [section(s), question, [[point attendu, [mots-clés]],...], paragraphe modèle]
+BANK.refl = {
+1: [
+['intro','Explique pourquoi le mot « nature » est dit polysémique. Donne un exemple pour chaque sens.',[['Sens 1 : l’ensemble de l’Univers, indépendant de l’activité humaine (forêt vs ville)',['univers','forêt','foret','culture','independant']],['Sens 2 : ce qui obéit à des lois nécessaires (gravité, digestion, génétique)',['loi','necessaire','gravite','digestion','genetique']],['Sens 3 : l’essence d’une chose (être « de nature colérique »)',['essence','nature de','colerique','propriete']],['Ces sens sont différents, donc pas de contradiction (l’humain s’oppose à la nature au sens 1 mais en fait partie au sens 2)',['partie','differents','contradiction','plusieurs sens']]],'La nature est polysémique : elle désigne (1) l’ensemble de l’Univers indépendant de l’action humaine (une forêt vs une ville), (2) ce qui obéit à des lois nécessaires (gravité, digestion, génétique), (3) l’essence d’une chose (« nature colérique »). Dans le sens 1 l’humain s’oppose à la nature (il fait de la culture), dans le sens 2 il en fait partie : ce sont deux sens du même mot, pas une contradiction.'],
+['1.1','Explique le fil rouge de la partie 1.1 : chaos, cosmos, hubris, sagesse.',[['Le chaos est un désordre toujours menaçant',['chaos','desordre','menace']],['Le cosmos est un ordre beau et harmonieux, conquête sur le chaos',['cosmos','ordre','harmon','conquete']],['L’hubris (démesure) rompt l’ordre et conduit au chaos',['hubris','demesure','limite','icare']],['La sagesse / tempérance est le remède : reconnaître ses limites et rester à sa place',['sagesse','temperance','limite','place','remede']]],'Pour les Grecs, l’ordre du monde (cosmos) est une conquête sur le chaos, toujours menaçant. Ce monde est fragile : l’hubris, qui dépasse les limites de sa condition (Icare), ramène au désordre. Le remède est la sagesse ou tempérance : reconnaître ses limites et rester à sa place.'],
+['2.2','Explique en quoi la nature moderne est une « machine » et non plus un cosmos.',[['Avant le XVIe-XVIIe s. : ordre porteur de sens, organisme vivant, finalité',['cosmos','finalit','sens','organisme','harmon']],['Après : nature purement matérielle, sans finalité ni intention (mécanisme)',['machine','mecani','sans finalit','materiel']],['Explication par causes et lois mathématiques (Galilée, Newton) : mesurable, prévisible',['cause','loi','mathemat','mesur','prevu','galilee','newton']],['Descartes : maître et possesseur de la nature, la nature devient un matériau',['descartes','maitre','possesseur','materiau','technique','exploit']]],'Avant le XVIe siècle, la nature est un cosmos ordonné, porteur de sens. Avec le mécanisme (Galilée, Newton, Descartes), elle devient une machine sans finalité, expliquée par des causes et des lois mathématiques. Elle ne prescrit plus rien : elle devient un matériau que l’homme peut maîtriser et exploiter.'],
+['3.2.2','Pourquoi le cours propose-t-il de reconnaître des droits à la nature ? Donne un exemple.',[['Crise écologique : exploitation illimitée, 6e extinction de masse',['extinction','crise','exploitation','ecolog','biodiversit']],['Deep ecology : valeur intrinsèque des êtres vivants, critique de l’anthropocentrisme',['deep','naess','intrinsec','anthropocentr']],['Extension historique des sujets de droit (esclaves, femmes, enfants)',['sujet','esclave','femme','enfant','historique','elargi']],['Exemple : la Mar Menor (personnalité juridique en 2022)',['mar menor','2022','personnalite']]],'L’exploitation illimitée met en danger la vie sur Terre (6e extinction de masse). La deep ecology (Næss) affirme la valeur intrinsèque du vivant. Comme la catégorie des sujets de droit s’est élargie (esclaves, femmes, enfants), on peut reconnaître des droits à la nature : la Mar Menor a obtenu la personnalité juridique en 2022.'],
+],
+2: [
+['1.2','Montre comment Aristote fait de la nature une norme, sans qu’il faille « imiter aveuglément » ce qui existe.',[['La nature est un principe interne de mouvement et de repos, orienté vers une fin (télos)',['interne','telos','fin','mouvement']],['Un être est « bon » quand il accomplit sa fonction propre (norme interne)',['fonction','accompl','bon','interne']],['Pour l’homme : fonction propre = activité rationnelle, vertu, juste milieu, eudaimonia',['raison','vertu','juste milieu','eudaimonia','vie bonne']],['La nature donne une norme d’accomplissement, pas un modèle à copier',['accomplissement','pas imiter','norme']]],'Pour Aristote, chaque être naturel est orienté vers sa fin (télos) : comprendre sa nature, c’est comprendre sa fonction propre. Un bon cheval est celui qui accomplit sa nature. L’homme, être de raison, doit réaliser une vie rationnelle, équilibrée et vertueuse (juste milieu). La nature est donc norme interne d’accomplissement, non modèle à imiter aveuglément.'],
+['1.3.1','Pourquoi Rousseau dit-il que l’homme s’est « éloigné de sa nature » ? Que reproche-t-il aux arts et sciences ?',[['Les arts et sciences n’ont pas rendu les hommes meilleurs mais plus corrompus (luxe, oisiveté)',['corrompu','luxe','oisivet','meilleur']],['Société du paraître : amour-propre, distinction sociale, hypocrisie',['paraitre','amour-propre','hypocrisie','distinction']],['Besoins limités de l’homme naturel vs désirs artificiels et infinis',['besoin','desir','artificiel','infini']],['La nature est un point de référence critique, pas un modèle à imiter',['reference','mesure','critique','pas imiter','retour']]],'Rousseau défend que le progrès des arts et des sciences n’a pas rendu les hommes meilleurs mais plus corrompus. L’amour-propre crée une société du paraître et de l’hypocrisie ; l’homme civilisé a des désirs artificiels et infinis, l’homme naturel des besoins limités. La nature sert de mesure pour critiquer la civilisation, pas de modèle à imiter.'],
+['1.3.2','Pourquoi le darwinisme social de Spencer est-il critiquable ? Donne deux critiques du cours.',[['On ne peut pas déduire une norme morale de l’observation des faits (Hume, être/devoir-être)',['hume','deduire','norme','fait','etre','devoir']],['Il naturalise les inégalités : présente comme nécessaire ce qui relève de choix politiques et sociaux',['naturalis','inegalit','choix','politique','social']],['Interprétation réductrice de Darwin : coopération, instincts sociaux, entraide (Kropotkine)',['reducteur','cooperation','entraide','kropotkine','instinct','filiation']],['Transposition contestable du vivant au social',['transposition','vivant']]],'Le darwinisme social transpose la sélection du vivant au social, et justifie les inégalités comme résultat naturel. On peut lui objecter (Hume) qu’on ne déduit pas une norme d’un fait, qu’il naturalise des rapports de domination qui relèvent de choix politiques, et qu’il néglige l’entraide et les instincts sociaux montrés par Darwin et Kropotkine.'],
+['2.3.2','Expose la critique de Hume sur l’ordre naturel et explique pourquoi elle remet en cause l’idée de nature-modèle.',[['Nous n’observons que des faits qui se succèdent, jamais la nécessité',['succede','regulier','necessite','jamais','faits']],['La causalité est une croyance produite par l’habitude (instinct, impossible à prouver)',['habitude','croyance','instinct','prouver','scepticisme']],['L’ordre naturel est peut-être une projection de notre besoin de régularité',['projection','besoin','regularit']],['La nature n’est pas un livre déjà écrit : en imitant la nature on imite ses propres projections',['livre','confond','projections','image','miroir']]],'Pour Hume, nous ne percevons jamais les « lois » de la nature ni la nécessité, seulement des faits qui se succèdent régulièrement. La causalité est une croyance née de l’habitude. L’ordre naturel qu’on voudrait prendre pour modèle est donc peut-être une projection de notre besoin de régularité : en croyant imiter la nature, l’homme imite l’image qu’il s’en fait.'],
+],
+3: [
+['1.1','Compare l’âme et la cité chez Platon, et explique en quoi la tempérance reproduit l’ordre du monde.',[['Trois parties : rationnelle (tête, gouverner), irascible (cœur, courage), désirante (ventre, désirs)',['rationnelle','irascible','desirante','noûs','nous','thumos','epithumia']],['Trois classes : rois-philosophes, soldats, producteurs',['roi','philosophe','soldat','producteur','paysan']],['La tempérance : chaque partie reste à sa place et remplit sa fonction',['place','fonction','temperance']],['Cela reproduit l’ordre du cosmos : ordre respecté → âme harmonieuse, juste',['cosmos','harmon','juste','ordre','nature']]],'Chez Platon, l’âme a trois parties (rationnelle, irascible, désirante) qui correspondent aux trois classes de la cité (rois-philosophes, soldats, producteurs). La tempérance consiste à ce que chaque partie reste à sa place et remplisse sa fonction : l’âme est alors harmonieuse et juste, ce qui reproduit en l’homme l’ordre du monde.'],
+['1.2','Compare Platon et Aristote : d’où vient la norme que donne la nature ?',[['Chez Platon : la norme vient de l’ordre du cosmos (place de chacun)',['platon','cosmos','ordre','place']],['Chez Aristote : la norme vient de l’intérieur de chaque être (sa fin, sa fonction)',['aristote','interne','interieur','fin','fonction']],['Point commun : la nature donne bien une norme',['norme','commun','tous les deux','deux']],['Schéma aristotélicien : nature → fonction propre → vertu → vie bonne',['fonction propre','vertu','vie bonne','schema']]],'Chez Platon, la norme est externe et globale : elle vient de l’ordre du cosmos, où chacun a sa place. Chez Aristote, elle est interne : chaque être porte en lui sa fin et sa fonction propre. Dans les deux cas la nature donne une norme. Schéma aristotélicien : nature → fonction propre → excellence (vertu) → vie bonne.'],
+[['2.1.1','2.1.2'],'Compare les deux manières dont Mill (nature extérieure) et Freud (nature intérieure) montrent que la nature n’est pas un modèle.',[['Mill : l’action humaine (ponts, digues, médecine) corrige les imperfections de la nature',['mill','pont','digue','medecine','corrige','imperfection']],['Faire de la nature un modèle est contradictoire avec l’éloge de la civilisation',['contradict','eloge','civilisation','paradoxe']],['Freud : la nature intérieure est faite de pulsions et d’agressivité (homo homini lupus)',['freud','pulsion','agress','loup']],['La civilisation contraint et corrige la nature humaine (renoncement pulsionnel)',['contrainte','corrige','renoncement','interdit','refoul']]],'Mill et Freud disent la même chose à deux échelles : nature extérieure (inondations, foudre → techniques) et nature intérieure (pulsions → morale et lois). Pour Mill, tout éloge de la civilisation est une critique de la nature. Pour Freud, la civilisation corrige et contraint une nature humaine agressive. Dans les deux cas, la culture va contre la nature.'],
+['2.4','Pourquoi le recours à la nature comme norme peut-il être dangereux ? Appuie-toi sur un exemple du cours.',[['Il produit des normes sur ce que les individus doivent être, présentées comme nécessaires et immuables',['norme','necessaire','immuable','evident']],['Exemple : la « nature féminine » et l’essentialisation',['feminin','femme','essentialis']],['Exemple : l’homosexualité « contre-nature » ; naturel ≠ bon ; référence sélective',['homosexual','contre','selectif','frequent']],['La nature devient un instrument de légitimation qui empêche de contester les rapports sociaux',['legitimation','instrument','ideologi','incontestable','exclu','imposer']]],'Faire de la nature une norme donne aux choix historiques et culturels l’apparence de vérités objectives. L’exemple de la « nature féminine » (essentialisation) ou celui de l’homosexualité jugée « contre-nature » montrent une référence sélective, orientée par des préjugés. Naturel ≠ bon : la nature devient un instrument de légitimation qui fige les identités et exclut.'],
+],
+4: [
+['prob','En t’appuyant sur la problématique, explique pourquoi « la nature comme norme » pose le problème être / devoir-être.',[['Notre rapport à la nature est non neutre : description et prescription',['description','prescription','non neutre']],['Ce qui est « naturel » est jugé légitime, ce qui est « contre nature » rejeté',['naturel','legitime','contre nature','rejet']],['Passage illégitime de « la nature est ainsi » à « il faut faire ainsi » (critique de Hume)',['hume','etre','devoir','fait','norme']],['Contradiction : esclavage justifié et droits naturels ; ambivalence : se conformer ou dominer',['esclavage','droits naturels','ambivalence','dominer','conformer']]],'On passe trop vite de la description (ce qu’est la nature) à la prescription (ce qu’il faut faire). Ce qui est naturel est jugé légitime, ce qui est contre nature rejeté. La nature a justifié l’esclavage et les droits naturels : son usage est contradictoire et ambivalent (se conformer ou dominer). Hume rappelle qu’on ne déduit pas une norme d’un fait.'],
+[['1.3.1','1.3.2'],'Rousseau et Spencer invoquent tous deux la nature : montre ce qui les oppose dans leur usage de la nature comme norme.',[['Rousseau : la nature est un modèle critique de la société (homme naturel, pitié, simplicité)',['rousseau','critique','pitie','simplicite','denature']],['Spencer : la nature (sélection, concurrence) est un modèle pour organiser la société',['spencer','selection','concurrence','survival']],['Rousseau dénonce les inégalités sociales comme dégénérescence ; Spencer les justifie comme résultat naturel',['inegalit','justifi','denonce','degenerescence','naturel']],['Les deux conceptions de la nature diffèrent : état originel perdu / lieu de lutte et sélection',['originel','lutte','etat','varient','conception']]],'Pour Rousseau, la nature est un point de référence critique : l’homme naturel simple et pitoyable contraste avec la société du paraître, productrice d’inégalités. Pour Spencer, la nature est lutte et sélection, et sert à justifier les inégalités. Ce contraste illustre la transition I → II : les conceptions de la nature varient selon les auteurs (état originel perdu vs lieu de lutte).'],
+['2.2','Explique ce que Koyré appelle le « divorce entre le monde des valeurs et le monde des faits » et son lien avec l’être/devoir-être.',[['Passage du cosmos fini et hiérarchisé à l’univers infini, homogène, sans centre',['cosmos','infini','homogene','centre','univers']],['Destruction du Cosmos + géométrisation de l’espace',['destruction','geometris','espace']],['Rejet des notions de valeur, perfection, harmonie, sens ou fin',['valeur','perfection','harmonie','sens','fin']],['Si le monde n’est que fait mesurable, on ne peut plus lire de norme dans la nature (être/devoir-être)',['norme','etre','devoir','fait','muette','objet']]],'Chez Koyré, la révolution scientifique détruit le Cosmos et géométrise l’espace : l’univers est infini, homogène, régi par les mêmes lois. Valeur, perfection, harmonie, fin sont rejetées : divorce entre monde des valeurs et monde des faits. La nature, objectivée et « muette », ne prescrit plus : on ne peut plus lire de norme dans les faits.'],
+['3.1','Explique la thèse de Descola « La Nature, ça n’existe pas ! » et présente les quatre ontologies par leurs deux critères.',[['L’opposition nature/culture est propre au dualisme occidental moderne (naturalisme)',['dualisme','occident','naturalisme','construction']],['Deux critères : physicalité (corps) et intériorité (âme/conscience)',['physicalit','interior','corps','ame']],['Naturalisme (même corps, âme différente) ; animisme (corps différent, même âme)',['naturalisme','animisme']],['Totémisme (même corps, même âme) ; analogisme (ni l’un ni l’autre)',['totem','analog']]],'Pour Descola, la séparation nature/culture est propre au naturalisme occidental moderne. Il distingue quatre ontologies selon la physicalité et l’intériorité : naturalisme (mêmes corps, âmes différentes), animisme (corps différents, même âme), totémisme (mêmes corps, même âme), analogisme (ni l’un ni l’autre). La « Nature » n’est donc pas universelle.'],
+],
+};
+
+// Texte à trous : [section, texte avec {} pour chaque trou, [[réponses acceptées],...], mots pièges (niveau Facile)]
+BANK.trous = {
+1: [
+['intro','La nature est un concept {}, c’est-à-dire qui a plusieurs sens.',[['polysémique','polysemique']],['paradoxal','contingent','artificiel']],
+['intro','Ce qui est apparu du fait de l’action humaine volontaire est dit {}.',[['artificiel']],['naturel','nécessaire','contingent']],
+['1.1','Le {} désigne chez les Grecs l’ordre et la beauté du monde, tandis que le {} est un désordre menaçant.',[['cosmos','kosmos'],['chaos']],['hubris','télos','paraître']],
+['1.2','Pour Aristote, chaque être tend vers sa {} (télos), c’est-à-dire sa forme accomplie.',[['fin']],['origine','loi','habitude']],
+['1.3.1','Pour Rousseau, « Tout est bien sortant des mains de l’Auteur des choses, tout {} entre les mains de l’homme ».',[['dégénère','degenere']],['progresse','disparaît','s’améliore']],
+['2.2','Descartes veut nous rendre « comme {} et possesseurs de la nature ».',[['maîtres','maitres']],['disciples','gardiens','citoyens']],
+],
+2: [
+['intro','Le {} est ce qui ne peut pas être autrement ; le {} est ce qui pourrait être autrement.',[['nécessaire','necessaire'],['contingent']],[]],
+['1.1','L’{} est la démesure qui consiste à dépasser les {} de sa condition.',[['hubris'],['limites','limite']],[]],
+['1.1','Dans l’âme platonicienne, la partie {} siège dans la tête et gouverne ; la partie {} siège dans le ventre.',[['rationnelle','rationnel'],['désirante','desirante','désir']],[]],
+['1.2','La vertu est un juste {} entre deux vices : par exemple le courage entre la {} et la témérité.',[['milieu'],['lâcheté','lacheté','lachete']],[]],
+['1.3.2','Spencer résume sa pensée par la formule « survival of the {} » et prône le {}.',[['fittest'],['laisser-faire','laisser faire','laissez-faire']],[]],
+['2.3.1','Pour Hume, l’{} consiste à attribuer à la nature des intentions humaines.',[['anthropomorphisme']],[]],
+],
+3: [
+['1.1','Chez Platon, la {} est la maîtrise de soi : chaque partie de l’âme reste à sa place sous la conduite de la {}.',[['tempérance','temperance','sôphrosunè','sophrosune'],['raison']],[]],
+['1.2','Pour Aristote, la vie bonne (l’{}) est l’accomplissement de la fonction propre de l’homme, qui est une activité {}.',[['eudaimonia'],['rationnelle','rationnel','raisonnable']],[]],
+['2.1.2','Freud cite « {} homini lupus » pour dire que l’{} de l’homme est une menace pour la vie en société.',[['homo'],['agressivité','agressivite']],[]],
+['2.2','Pour Descartes, l’homme est {} cogitans (substance pensante) et la nature est res {} (substance étendue).',[['res'],['extensa']],[]],
+['3.1','Descola distingue quatre ontologies selon la {} et l’{} : naturalisme, animisme, totémisme, analogisme.',[['physicalité','physicalite','corps'],['intériorité','interiorite','âme','ame']],[]],
+['3.2','Heidegger dénonce l’{} de la nature par la technique moderne : la nature n’est plus qu’un stock de {}.',[['arraisonnement','gestell'],['ressources','ressource']],[]],
+],
+4: [
+['prob','Toute la problématique tient dans l’opposition entre l’{} (ce qui est) et le {} (ce qui doit être).',[['être','etre'],['devoir-être','devoir etre','devoir être']],[]],
+['1.3.2','Pour critiquer Spencer, Hume rappelle qu’on ne peut pas déduire une {} morale de l’observation des {}.',[['norme'],['faits','fait']],[]],
+['2.2','Koyré décrit le passage du cosmos fini et {} à l’univers infini, {}, régi partout par les mêmes lois.',[['hiérarchisé','hierarchise','hiérarchique','hierarchique','ordonné','ordonne'],['homogène','homogene']],[]],
+['2.3.2','Pour Hume, la {} est une croyance produite par l’{}, impossible à prouver : c’est son scepticisme.',[['causalité','causalite'],['habitude']],[]],
+['3.2.1','Cronon montre que la {} est une construction culturelle, née du romantisme américain du XIX{} siècle.',[['wilderness'],['e','ème','eme']],[]],
+['3.2.2','Parler de {} plutôt que d’anthropocène, c’est désigner un modèle économique et non l’espèce humaine en général.',[['capitalocène','capitalocene']],[]],
+],
+};
+
+// Associer : [section(s), consigne, [[élément, correspondance],...]]
+BANK.assoc = {
+1: [
+['1.1','Associe chaque notion grecque à son sens.',[['Kosmos','Ordre et beauté du monde'],['Chaos','Désordre, indétermination'],['Hubris','Démesure'],['Tempérance','Maîtrise de soi sous la conduite de la raison']]],
+['1.3.1','Associe chaque auteur à son idée.',[['Rousseau','Le progrès des arts et sciences a corrompu les hommes'],['Spencer','Survival of the fittest'],['Mill','La civilisation corrige les imperfections de la nature'],['Descartes','Maîtres et possesseurs de la nature']]],
+['3.1','Associe chaque ontologie de Descola à son idée.',[['Naturalisme','Même corps, âme différente'],['Animisme','Corps différent, même âme'],['Totémisme','Même corps, même âme'],['Analogisme','Ni le même corps ni la même âme']]],
+],
+2: [
+['1.1','Associe chaque partie de l’âme platonicienne à sa classe de la cité.',[['Rationnelle (noûs)','Rois-philosophes'],['Irascible (thumos)','Soldats'],['Désirante (epithumia)','Producteurs / paysans']]],
+['1.2','Associe chaque vertu d’Aristote à son vice par excès.',[['Courage','Témérité'],['Générosité','Prodigalité'],['Douceur','Colère excessive'],['Véracité','Fanfaronnade'],['Amabilité','Complaisance excessive']]],
+['2.2','Associe chaque notion à son auteur ou sa période.',[['Du monde clos à l’univers infini','Koyré'],['res cogitans / res extensa','Descartes'],['Enquête sur l’entendement humain','Hume'],['Malaise dans la civilisation','Freud'],['La Nature (1874)','Mill']]],
+],
+3: [
+['1.2','Associe chaque vertu d’Aristote à son vice par défaut.',[['Courage','Lâcheté'],['Tempérance','Insensibilité'],['Générosité','Avarice'],['Douceur','Apathie'],['Véracité','Fausse modestie'],['Amabilité','Rudesse']]],
+['1.3.2','Associe chaque critique à sa cible ou à son auteur.',[['On ne déduit pas une norme des faits','Hume contre Spencer'],['L’homme naturel bon est une figure théorique','Critique de Rousseau'],['L’entraide comme facteur d’évolution','Kropotkine'],['Les instincts sociaux sélectionnés','Darwin, La filiation de l’homme']]],
+['3.2','Associe chaque auteur à son concept.',[['Heidegger','Arraisonnement (Gestell)'],['Cronon','Mythe de la wilderness'],['Næss','Deep ecology'],['Descola','Naturalisme / animisme / totémisme / analogisme']]],
+],
+4: [
+['1.1','Associe chaque notion ou mythe à sa fonction dans le raisonnement du cours.',[['Icare, Arachné, Niobé','Illustrations de l’hubris'],['« La physis aime à se cacher »','Héraclite : la nature manifestée et cachée'],['Gorgias','Platon : ciel, terre, dieux et hommes liés par amitié et justice'],['Théogonie','Hésiode : au commencement il y a Chaos']]],
+['2.3.1','Associe chaque critique de Hume à son contenu.',[['Anthropomorphisme','On prête à la nature des intentions humaines'],['Causalité par habitude','On prend une répétition pour une nécessité'],['Être / devoir-être','On ne déduit pas une norme d’un fait']]],
+['3.2.1','Associe chaque notion à sa définition dans la partie III.',[['Anthropocène','Attribue la crise écologique à l’humanité en général'],['Capitalocène','Désigne un modèle économique fondé sur l’exploitation illimitée'],['Arraisonnement','La nature réduite à un stock de ressources disponibles'],['Personnalité juridique','Reconnue à la Mar Menor en 2022']]],
+],
+};
+
+// Questions supplémentaires pour les parties les moins couvertes
+const add=(m,l,...items)=>{BANK[m][l].push(...items);};
+
+// ---- QCM
+add('qcm',1,
+['2.1.1','Quel philosophe a écrit « La Nature » (1874) ?','John Stuart Mill',['David Hume','Sigmund Freud','Alexandre Koyré'],'Mill : si le cours naturel des choses était parfaitement bon, toute action humaine serait une ingérence inutile, voire nuisible.'],
+['2.3.1','Que projette l’homme sur la nature selon Hume (anthropomorphisme) ?','Des intentions, des volontés, des finalités humaines',['Des lois mathématiques','Des droits juridiques','Des qualités secondes'],'L’homme interprète les phénomènes complexes à partir de ce qu’il connaît le mieux : lui-même. La nature devient un miroir.'],
+['2.4','Que signifie « essentialiser » un groupe ?','Le réduire à une essence naturelle fixe',['Le protéger par la loi','Le comparer à un animal','Lui reconnaître des droits'],'Essentialisation = réduire un individu ou un groupe à une essence naturelle fixe, en oubliant la part historique, sociale et culturelle.'],
+['3.2','Pour Heidegger, la technique moderne traite la nature comme…','Un stock de ressources disponibles',['Un cosmos harmonieux','Une personne juridique','Un miroir de l’homme'],'Arraisonnement (Gestell) : la nature n’est plus un milieu mais un ensemble de ressources à exploiter, organiser, rendre disponibles.'],
+['3.2.1','Qui est William Cronon ?','Un historien de l’environnement',['Un physicien du XVIIe siècle','Un philosophe grec','Un juriste espagnol'],'The Trouble with Wilderness (1995) : la wilderness est une construction culturelle.'],
+['3.2.2','Qui est associé à la « deep ecology » dans le cours ?','Arne Næss',['Philippe Descola','Martin Heidegger','William Cronon'],'Deep ecology : les êtres vivants ont une valeur intrinsèque, indépendante de leur utilité pour l’homme.'],
+['2.1.2','Quel ouvrage de Freud est étudié dans le cours ?','Malaise dans la civilisation',['La Nature','Du monde clos à l’univers infini','Enquête sur l’entendement humain'],'Freud : la civilisation répond à la violence originaire par des contraintes et des interdits.'],
+);
+add('qcm',2,
+['2.1.1','Quelle activité Mill cite-t-il parmi les transformations élémentaires de la nature ?','Cultiver, construire des habitations, se vêtir',['Contempler les astres','Méditer sur le cosmos','Imiter les animaux'],'Même les activités élémentaires sont des transformations de la nature : tout éloge de la civilisation revient à critiquer la nature.'],
+['2.3.2','Que voit-on d’après Hume quand « le soleil se lève chaque matin » ?','Seulement des faits qui se succèdent régulièrement, pas la nécessité qui les relie',['Une loi nécessaire perçue directement','Une volonté divine','Un ordre voulu par la nature'],'Nous n’avons jamais accès directement aux « lois » de la nature : seulement une répétition.'],
+['2.4','Que devient la nature quand on l’invoque pour justifier une hiérarchie sociale ?','Un instrument de légitimation qui donne à la hiérarchie une apparence de nécessité',['Une réalité neutre et objective','Un simple objet scientifique','Un modèle d’harmonie'],'Présenter une hiérarchie comme « naturelle », c’est la rendre incontestable et empêcher qu’elle soit interrogée politiquement ou moralement.'],
+['3.1','À quelle ontologie correspondent les Aborigènes australiens selon Descola ?','Le totémisme',['Le naturalisme','L’animisme','L’analogisme'],'Totémisme : humains et non-humains d’un même totem partagent même essence et origine ; les différences individuelles s’effacent.'],
+['3.2','Comment l’arraisonnement transforme-t-il une rivière ?','En source d’énergie hydroélectrique',['En lieu sacré','En frontière naturelle','En personne juridique'],'Une rivière → énergie hydroélectrique ; une forêt → réserve de bois ; la terre → stock de matières premières.'],
+['3.2.1','Que révèle le paradoxe de la wilderness ?','Les espaces dits « sauvages » ont souvent été habités et aménagés pendant des siècles',['Qu’ils sont restés intacts','Qu’ils sont dangereux','Qu’ils n’existent qu’en Amérique'],'Notamment par des populations autochtones, qui ont même contribué à certains équilibres écologiques et à la biodiversité.'],
+['3.2.2','Quelle baisse des populations d’espèces sauvages depuis 1970 le cours cite-t-il (Indice Planète Vivante) ?','Environ −69 %',['Environ −9 %','Environ −29 %','Environ −89 %'],'Le graphique indique environ −69 % (la légende du cours indique −68 %) : 6e extinction de masse.'],
+);
+add('qcm',3,
+['2.1.1','Que conclut Mill de notre admiration pour les victoires de l’art sur la nature ?','Qu’il faut soumettre les voies de la nature et non leur obéir',['Qu’il faut imiter la nature','Que la nature est parfaite','Que la technique est inutile'],'Les puissances de la nature sont souvent en position d’ennemi face à l’homme.'],
+['2.3.1','À quoi Hume relie-t-il l’anthropomorphisme ?','À l’origine de nombreuses croyances religieuses',['À la naissance de la science moderne','À la théorie de la sélection naturelle','À l’éloge de la civilisation'],'L’homme préfère rapprocher l’inconnu de son expérience plutôt que d’admettre l’absence de sens ou de finalité.'],
+['2.4','Pourquoi « fréquent » ou « majoritaire » ne prouve-t-il pas qu’un comportement soit moralement supérieur ?','Parce que naturel ≠ bon : la fréquence est un fait, la supériorité morale une valeur',['Parce que les comportements fréquents sont rares','Parce que la nature est parfaite','Parce que la morale est mathématique'],'Piège fréquent du cours : naturel ≠ bon. Il y a une distinction entre fait et valeur (être/devoir-être).'],
+['3.1','Quelle ontologie de Descola correspond aux sociétés de la Chine ancienne et d’Afrique ?','L’analogisme',['Le naturalisme','L’animisme','Le totémisme'],'Analogisme : réel fragmenté ; il faut établir correspondances, analogies, réseaux symboliques (discontinuité physique et d’intériorité).'],
+['3.2','Quel est le danger « philosophique » de l’arraisonnement ?','Oublier d’autres manières d’habiter le monde et de se rapporter au vivant',['Détruire seulement les forêts','Rendre la nature muette','Revenir à l’animisme'],'Danger non seulement écologique mais philosophique : réduire le monde à ce qui est exploitable et calculable.'],
+['3.2.1','Quel risque y a-t-il à protéger la nature « contre » l’homme ?','Renforcer le dualisme nature/culture',['Aggraver l’exploitation','Supprimer les droits de la nature','Valider le mécanisme'],'La question écologique, c’est inventer des manières plus justes, équilibrées et soutenables d’habiter le monde, pas sanctuariser une nature « vierge ».'],
+['3.2.2','Que signifie « valeur intrinsèque » pour la deep ecology ?','Une valeur indépendante de l’utilité pour l’homme',['Une valeur marchande','Une valeur donnée par la loi seule','Une valeur scientifique'],'Une forêt, un fleuve, un animal, un écosystème ont une dignité propre qui exige respect.'],
+);
+add('qcm',4,
+['2.1.1','Pourquoi Mill affirme-t-il que faire de la nature un modèle est contradictoire ?','Parce que louer les exploits de la civilisation, c’est reconnaître que la nature est imparfaite et à corriger',['Parce que la nature est mathématique','Parce que la nature est divine','Parce que l’homme est naturellement agressif'],'Le paradoxe : modèle ET éloge de la civilisation sont incompatibles. La nature est une puissance à laquelle s’opposer pour rendre le monde habitable.'],
+['2.3.1','Quel lien le cours fait-il entre Hume et le « miroir » ?','En voyant un ordre ou une sagesse dans la nature, l’homme y retrouve une image de lui-même',['La nature reflète les lois de Newton','La nature reflète la volonté divine','La nature est un reflet de la culture grecque'],'Nous croyons découvrir un modèle mais nous y retrouvons nos attentes, peurs, représentations.'],
+['2.4','Pourquoi l’exemple de l’homosexualité « contre-nature » est-il critiqué dans le cours ?','Le raisonnement suppose des normes morales dans la nature et sélectionne ses références selon des présupposés culturels',['Parce qu’aucun animal ne présente ces comportements','Parce que la nature est une machine','Parce que Freud l’interdit'],'De nombreux comportements homosexuels existent chez les animaux : la référence à la nature est sélective.'],
+['3.1','Quel est l’enjeu de la typologie de Descola pour la question « la nature est-elle un modèle ? »','La séparation nature/culture n’est pas universelle : la « nature » est une construction propre à l’Occident moderne',['La nature est un modèle universel','Les Achuar vivent sans culture','La science prouve la nature'],'Descola ouvre la partie III : l’opposition nature/culture est elle-même une construction culturelle.'],
+['3.2','En quoi l’arraisonnement prolonge-t-il la vision mécaniste de la nature (2.2) ?','La nature est un objet exploitable et calculable, un stock disponible sans valeur propre',['La nature redevient un cosmos','La nature est un sujet de droit','La nature est une essence'],'La technique moderne « provoque » la nature et la met en demeure de fournir énergie et matériaux, sous l’aspect de l’utilité et de la rentabilité.'],
+['3.2.1','Pourquoi Cronon dit-il que la wilderness est « située historiquement » ?','Elle naît de la culture romantique américaine du XIXe siècle, quand l’industrialisation éloigne les hommes de certains espaces',['Elle date de la Grèce antique','Elle est née avec Descartes','Elle vient d’un peuple autochtone'],'Idéal valorisé parce qu’il semble échapper au monde humain : c’est une construction culturelle.'],
+['3.2.2','Quel « déplacement majeur » le cours décrit-il en conclusion de la protection de la nature ?','On ne protège plus l’environnement seulement parce qu’il est utile mais parce qu’il a une valeur qui excède sa fonction économique',['On protège la nature pour la dominer','On protège uniquement les espèces menacées','On renonce à protéger la nature'],'La nature devient partenaire moral et juridique.'],
+);
+
+// ---- Vrai / Faux
+add('vf',1,
+['2.3.1','La nature est un miroir où l’homme projette ses attentes, ses peurs et ses représentations (Hume).',true,'Anthropomorphisme : l’ordre, l’harmonie, la sagesse que nous voyons dans la nature, nous y sommes peut-être projetés.'],
+['2.4','Naturel et bon sont deux notions équivalentes.',false,'Piège fréquent : naturel ≠ bon. Ce qui est fréquent ou « naturel » n’est pas pour autant moralement légitime.'],
+['3.1','Descola a mené ses travaux auprès des Achuar, un peuple d’Amazonie.',true,'Dans Par-delà nature et culture, il montre que toutes les sociétés ne séparent pas humains et nature.'],
+['3.2','Pour Heidegger, la technique moderne transforme la forêt en réserve de bois.',true,'Exemples de l’arraisonnement : rivière → énergie hydroélectrique ; forêt → réserve de bois ; terre → stock de matières premières.'],
+['3.2.1','La wilderness est un idéal valorisé parce qu’il semble échapper au monde humain.',true,'Cronon : c’est une construction culturelle, historiquement située.'],
+['3.2.2','Arne Næss est associé à la deep ecology (écologie profonde).',true,'Il critique l’anthropocentrisme : l’homme n’est pas le centre ni la mesure de toute chose.'],
+['2.1.1','Pour Mill, la nature est toujours parfaite et il faut s’y conformer.',false,'Au contraire : il faut soumettre les voies de la nature et non leur obéir, car ses puissances sont souvent en position d’ennemi.'],
+);
+add('vf',2,
+['2.1.1','Pour Mill, cultiver, construire des habitations et se vêtir sont déjà des transformations de la nature.',true,'Même les activités élémentaires transforment la nature.'],
+['2.3.2','Selon Hume, le soleil qui se lève chaque matin est un exemple de faits qui se succèdent régulièrement, sans nécessité perçue.',true,'Nous observons des faits particuliers, jamais la nécessité qui les relie.'],
+['2.4','Le cours donne l’exemple de la « nature féminine » : des rôles sociaux jugés naturels donc légitimes.',true,'À partir de caractéristiques biologiques réelles, on a construit des rôles sociaux jugés naturels : essentialisation.'],
+['3.1','Pour Descola, l’analogisme correspond aux sociétés occidentales modernes.',false,'C’est le naturalisme. L’analogisme correspond à la Chine ancienne et aux sociétés africaines.'],
+['3.2','Pour Heidegger, la technique moderne « provoque » la nature et la met en demeure de fournir énergie et matériaux.',true,'Elle est « sommée » de se présenter sous l’aspect de l’utilité et de la rentabilité.'],
+['3.2.1','Pour Cronon, l’homme est par essence incompatible avec la nature.',false,'Cette idée est le produit d’une représentation culturelle. Le problème n’est pas l’existence humaine mais une certaine manière de penser le rapport homme/nature.'],
+['3.2.2','L’écologie dominante est anthropocentrée : elle protège la nature parce qu’elle est utile à l’homme.',true,'La deep ecology affirme au contraire une valeur intrinsèque du vivant.'],
+);
+add('vf',3,
+['2.1.2','La civilisation est nécessaire car les passions instinctives sont souvent plus fortes que les intérêts rationnels.',true,'Freud : la simple coopération ne suffit pas, il faut des contraintes et des interdits.'],
+['2.3.1','Pour Hume, la disposition à anthropomorphiser est à l’origine de nombreuses croyances religieuses.',true,'L’homme préfère rapprocher l’inconnu de l’expérience familière plutôt qu’admettre l’absence de sens.'],
+['2.4','L’essentialisation est la même chose que la biologie.',false,'Piège du cours : le problème est de figer une essence en oubliant le rôle de l’histoire et de la société.'],
+['3.1','Chez les Achuar, les animaux sont des partenaires sociaux.',true,'Continuité, échange, parenté entre humains et non-humains.'],
+['3.2','Le danger de l’arraisonnement est uniquement écologique.',false,'Il est aussi philosophique : on oublie d’autres manières d’habiter le monde.'],
+['3.2.1','Protéger la nature contre l’homme renforce le dualisme nature/culture.',true,'La question écologique est d’inventer des manières plus justes d’habiter le monde, pas de sanctuariser une nature vierge.'],
+['3.2.2','Reconnaître des droits à la nature revient à lui attribuer une conscience humaine.',false,'Il s’agit de protéger certains écosystèmes pour eux-mêmes, pas de leur donner une conscience humaine.'],
+);
+add('vf',4,
+['2.3.2','Pour Hume, la causalité est une croyance née de l’habitude, impossible à prouver ni par déduction ni par induction.',true,'C’est son scepticisme sur la causalité.'],
+['2.1.1','Selon Mill, tout éloge de la civilisation revient à critiquer la nature.',true,'Faire de la nature un modèle est contradictoire avec l’éloge de la civilisation.'],
+['2.4','Pour le cours, la nature comme norme est un instrument non neutre qui sert à imposer des normes et exclure ceux qui s’en écartent.',true,'Elle donne l’apparence de la nécessité et empêche qu’une hiérarchie soit interrogée.'],
+['3.1','Pour Descola, la séparation humains/nature a existé dans toutes les sociétés.',false,'Cette séparation est propre au naturalisme occidental moderne ; elle n’existe pas chez de nombreuses sociétés non occidentales.'],
+['3.2','Le découpage occidental moderne nature/culture a rendu possible l’exploitation de la nature comme stock passif, pure ressource.',true,'Heidegger : arraisonnement par la technique moderne.'],
+['3.2.1','Le terme « capitalocène » désigne l’humanité en général comme responsable de la crise écologique.',false,'C’est « anthropocène ». Le capitalocène désigne un modèle économique fondé sur l’exploitation illimitée et la croissance.'],
+['3.2.2','Parmi les arguments pour les droits de la nature, le cours cite l’extension historique de la catégorie des sujets de droit.',true,'Esclaves, femmes, enfants ont longtemps été exclus de la pleine reconnaissance juridique.'],
+);
+
+// ---- Questions simples
+add('simple',1,
+['3.2.1','Quel ouvrage de Cronon (1995) critique le mythe de la wilderness ?','The Trouble with Wilderness.',[['trouble','wilderness']],1],
+['2.1.1','Quel philosophe écrit « La Nature » en 1874 ?','Mill.',[['mill']],1],
+['2.3.1','Quel philosophe parle d’anthropomorphisme de la nature ?','Hume.',[['hume']],1],
+['3.2','Quel philosophe dénonce l’« arraisonnement » de la nature ?','Heidegger.',[['heidegger']],1],
+);
+add('simple',2,
+['2.1.1','Quelles activités élémentaires sont déjà des transformations de la nature selon Mill ?','Cultiver, construire des habitations, se vêtir.',[['cultiv'],['habitation','construi','maison'],['vet','habill']],2],
+['3.1','Dans quelles sociétés trouve-t-on l’animisme selon Descola ?','Chez les peuples amazoniens (ex. les Achuar).',[['amazon','achuar']],1],
+['3.2','Que fait de la rivière, de la forêt et de la terre la technique moderne selon Heidegger ?','Rivière → énergie hydroélectrique ; forêt → réserve de bois ; terre → stock de matières premières.',[['hydro','energie'],['bois','foret'],['matiere','stock']],2],
+['3.2.2','Quelle est la baisse approximative des populations d’espèces sauvages depuis 1970 citée dans le cours ?','Environ −69 % (Indice Planète Vivante).',[['69','68']],1],
+['2.4','Que signifie « essentialiser » ?','Réduire un individu ou un groupe à une essence naturelle fixe en oubliant la part historique, sociale et culturelle.',[['essence','fige','fixe','reduire'],['histoire','social','culturel']],1],
+);
+add('simple',3,
+['2.3.1','Pourquoi l’homme préfère-t-il anthropomorphiser la nature selon Hume ?','Il rapproche l’inconnu de ce qu’il connaît le mieux (lui-même) plutôt que d’admettre l’absence de sens ou de finalité.',[['inconnu','connu','familier'],['lui-meme','soi','humain'],['absence','sens','finalit']],2],
+['2.4','Cite deux exemples du cours où le recours à la nature sert à légitimer des normes.','La « nature féminine » (rôles sociaux jugés naturels) et l’homosexualité jugée « contre-nature ».',[['femin','femme'],['homosexual']],2],
+['3.2','Que « provoque » la technique moderne selon Heidegger ?','La nature est provoquée et mise en demeure de fournir énergie et matériaux, sommée de se présenter sous l’aspect de l’utilité et de la rentabilité.',[['fournir','energie','materiaux','ressource'],['utilit','rentab','demeure','somm']],1],
+['3.2.1','Pourquoi la wilderness est-elle un paradoxe selon Cronon ?','Les espaces dits « sauvages » ont été habités, traversés, aménagés pendant des siècles (notamment par des populations autochtones).',[['habite','amenage','autochtone','traverse','humain'],['sauvage','wilderness']],1],
+['3.2.2','Quel argument historique justifie de reconnaître des droits à la nature ?','L’élargissement progressif de la catégorie des sujets de droit (esclaves, femmes, enfants longtemps exclus).',[['elargi','progress','extension'],['sujet','droit','esclave','femme','enfant']],2],
+);
+add('simple',4,
+['3.1','Que signifie la formule de Descola « La Nature, ça n’existe pas ! » ?','La séparation nature/culture est propre au naturalisme occidental moderne : ailleurs elle n’existe pas, c’est donc une construction culturelle.',[['occident','moderne','naturalisme','construction','culturel'],['separation','dualisme','pas partout','universel','nature/culture']],2],
+['3.2.1','Pourquoi dire que protéger la nature « contre » l’homme est un risque ?','Cela renforce le dualisme nature/culture ; il faut plutôt inventer des manières plus justes, équilibrées et soutenables d’habiter le monde.',[['dualisme','separ','nature/culture'],['habiter','soutenable','juste','equilibr']],2],
+['3.2.2','En quoi la deep ecology critique-t-elle l’écologie dominante ?','L’écologie dominante est anthropocentrée (la nature est protégée car utile à l’homme) ; la deep ecology affirme une valeur intrinsèque des êtres vivants et de l’écosystème.',[['anthropocentr','utile','utilit'],['intrinsec','valeur','dignit','propre']],2],
+['2.1.1','Quel est le paradoxe que Mill met en évidence à propos de la nature et de la civilisation ?','Faire de la nature un modèle est contradictoire avec l’éloge que nous faisons de la civilisation, qui transforme et corrige la nature.',[['contradict','paradoxe','incompat'],['civilisation','eloge','technique','art','corrige']],2],
+);
+
+// ---- Définitions
+add('def',1,
+['3.2.1','Wilderness (version courte)','Nature sauvage, pure et intacte, à préserver de toute présence humaine.',[['sauvage','pure','intact','vierge']],1],
+['2.1.1','Civilisation (pour Mill)','Ensemble des victoires de l’art et de la technique qui corrigent les imperfections de la nature.',[['technique','art','invention','correct','transform','maitris']],1],
+);
+add('def',2,
+['3.2.2','Sujet de droit','Être (ou entité) auquel le droit reconnaît des droits propres ; la catégorie s’est élargie (esclaves, femmes, enfants), et peut inclure certains écosystèmes.',[['droit'],['reconnu','propre','protege','personnalite','juridique','sujet']],1],
+['2.4','Naturel ≠ bon','Ce qui est fréquent ou « naturel » n’est pas pour autant moralement légitime : on ne passe pas du fait à la valeur.',[['frequent','naturel'],['moral','legitime','valeur','bon']],1],
+);
+add('def',3,
+['3.1','Totémisme (Descola)','Ontologie où humains et non-humains d’un même totem partagent même essence et origine (continuité de physicalité et d’intériorité) ; ex. Aborigènes australiens.',[['essence','origine','totem','meme'],['continuit','aborigene','australi']],1],
+['3.2.2','Capitalocène','Terme qui désigne comme responsable de la crise écologique le modèle économique fondé sur l’exploitation illimitée des ressources et la recherche permanente de croissance (capitalisme industriel occidental).',[['modele','economique','capitalisme'],['exploitation','croissance','ressource','occident']],2],
+);
+add('def',4,
+['2.3.1','Anthropomorphisme comme origine des croyances (Hume)','Disposition à interpréter la nature à partir de l’homme (intentions, finalités) ; elle expliquerait l’origine de nombreuses croyances religieuses et la projection d’un ordre ou d’une sagesse dans la nature.',[['intention','finalit','humain','projection'],['religi','croyance','ordre','sagesse']],1],
+['3.2','Gestell (arraisonnement)','Exigence de la technique moderne qui provoque la nature et la met en demeure de se présenter comme stock de ressources disponibles, sous l’aspect de l’utilité et de la rentabilité.',[['technique','provoque','demeure'],['ressource','stock','utilit','rentab','disponible']],1],
+);
+
+// ---- Textes à trous
+add('trous',1,
+['2.1.1','Pour Mill, il faut {} les voies de la nature et non leur obéir.',[['soumettre']],['imiter','respecter','contempler']],
+['2.4','Naturel n’est pas {} : ce qui est fréquent n’est pas pour autant moralement légitime.',[['bon']],['faux','nécessaire','vrai']],
+['3.2.2','La {} Menor est une lagune espagnole qui a obtenu la personnalité juridique en 2022.',[['mar']],['terre','forêt','mer']],
+);
+add('trous',2,
+['2.4','Le recours à la nature présente des choix sociaux comme {} et immuables.',[['nécessaires','necessaires','évidents','evidents','nécessaire']],[]],
+['3.2.2','L’écologie {} (Næss) affirme que les êtres vivants ont une valeur {}.',[['profonde','deep'],['intrinsèque','intrinseque','propre']],[]],
+['3.2.1','Cronon est un historien de l’{}.',[['environnement']],[]],
+);
+add('trous',3,
+['2.3.1','Pour Hume, l’{} est une tendance à attribuer à la nature des intentions humaines.',[['anthropomorphisme']],[]],
+['2.4','L’{} réduit un groupe à une essence naturelle {} et oublie l’histoire.',[['essentialisation'],['fixe','figée','figee']],[]],
+);
+add('trous',4,
+['3.2.2','Reconnaître des droits à la nature, c’est la penser comme {} de droit, ce qui élargit la catégorie des sujets de droit.',[['sujet']],[]],
+['3.1','Pour Descola, le dualisme occidental moderne s’appelle le {}.',[['naturalisme']],[]],
+);
+
+// ---- Réflexion supplémentaires
+add('refl',2,
+[['3.2','3.2.1'],'Présente la critique de Heidegger (arraisonnement) puis celle de Cronon (wilderness) : que reprochent-ils à notre rapport à la nature ?',[['Heidegger : la technique moderne réduit la nature à un stock de ressources (rivière, forêt, terre)',['heidegger','ressource','stock','arraisonnement','rivi','foret']],['Danger aussi philosophique : on oublie d’autres manières d’habiter le monde',['philosoph','habiter','autres manieres','oublie']],['Cronon : la wilderness est une construction culturelle (romantisme américain du XIXe s.)',['cronon','wilderness','construction','romantique','culturel']],['Paradoxe : ces espaces ont été habités et aménagés ; il faut inventer d’autres manières d’habiter plutôt que séparer homme et nature',['habite','amenage','autochtone','dualisme','habiter','separer']]],'Heidegger dénonce l’arraisonnement : la technique moderne fait de la nature un stock de ressources (rivière → énergie, forêt → bois). Danger écologique et philosophique : on oublie d’autres manières d’habiter le monde. Cronon montre que la wilderness est une construction culturelle : ces espaces ont été habités et aménagés. Il faut inventer des manières plus justes d’habiter le monde plutôt que séparer homme et nature.'],
+);
+add('refl',3,
+[['2.3.1','2.3.2'],'Distingue les deux critiques de Hume sur la nature comme modèle (anthropomorphisme et causalité/habitude), et rappelle son troisième usage dans le cours.',[['Anthropomorphisme : on prête à la nature des intentions humaines (origine de croyances religieuses)',['anthropomorph','intention','religi']],['Causalité par habitude : on prend une répétition pour une nécessité',['habitude','repetition','necessite','causalit']],['Dans les deux cas, la valeur normative vient de nous, pas de la nature',['vient de nous','projection','miroir','valeur normative','nous y projetons']],['Troisième usage (partie I) : on ne passe pas de l’être au devoir-être (critique de Spencer)',['spencer','etre','devoir','norme','fait']]],'Hume : (1) anthropomorphisme : l’homme projette ses intentions sur la nature ; (2) causalité/habitude : on prend une répétition pour une nécessité. Dans les deux cas, la valeur normative vient de nous. Troisième usage : en 1.3.2, il critique Spencer en rappelant qu’on ne déduit pas une norme (devoir-être) d’un fait (être).'],
+);
+
+</script>
+<script>
+(function(){
+'use strict';
+/* ---------- Plan du cours ---------- */
+const SECTIONS=[
+ {id:'intro',g:'Introduction',n:'Définitions : la nature, un concept polysémique',p:'p. 1'},
+ {id:'prob',g:'Introduction',n:'La problématique : la nature peut-elle être un modèle ?',p:'p. 2'},
+ {id:'1.1',g:'I. La nature, principe de normativité',n:'Principe d’ordre et de limitation (les Grecs)',p:'p. 2-3'},
+ {id:'1.2',g:'I. La nature, principe de normativité',n:'Principe interne et modèle de perfection (Aristote)',p:'p. 3-4'},
+ {id:'1.3.1',g:'I. La nature, principe de normativité',n:'La culture, perversion de la nature : Rousseau',p:'p. 4-5'},
+ {id:'1.3.2',g:'I. La nature, principe de normativité',n:'La sélection naturelle appliquée au social (Darwin, Spencer, critiques)',p:'p. 5-6'},
+ {id:'2.1.1',g:'II. La nature modelée par l’homme',n:'Mill : la civilisation corrige les imperfections de la nature',p:'p. 7'},
+ {id:'2.1.2',g:'II. La nature modelée par l’homme',n:'Freud : la civilisation contre les pulsions',p:'p. 7'},
+ {id:'2.2',g:'II. La nature modelée par l’homme',n:'La modernité et le mécanisme : une nature « muette »',p:'p. 8-9'},
+ {id:'2.3.1',g:'II. La nature modelée par l’homme',n:'Hume : l’homme anthropomorphise la nature',p:'p. 9'},
+ {id:'2.3.2',g:'II. La nature modelée par l’homme',n:'Hume : l’ordre naturel comme projection de l’habitude',p:'p. 9'},
+ {id:'2.4',g:'II. La nature modelée par l’homme',n:'Le danger de la nature comme norme',p:'p. 9-10'},
+ {id:'3.1',g:'III. Sortir la nature de la représentation qui l’enferme',n:'L’opposition nature/culture, construction culturelle (Descola)',p:'p. 10-11'},
+ {id:'3.2',g:'III. Sortir la nature de la représentation qui l’enferme',n:'Heidegger : l’arraisonnement de la nature',p:'p. 11'},
+ {id:'3.2.1',g:'III. Sortir la nature de la représentation qui l’enferme',n:'Cronon : le mythe de la « wilderness »',p:'p. 11-12'},
+ {id:'3.2.2',g:'III. Sortir la nature de la représentation qui l’enferme',n:'De la « deep ecology » aux droits du vivant',p:'p. 12'}
+];
+const IDX={}; SECTIONS.forEach((s,i)=>IDX[s.id]=i);
+const MODS=[
+ {id:'qcm',name:'Quiz',desc:'Une bonne réponse parmi quatre.'},
+ {id:'vf',name:'Vrai ou faux',desc:'Tranche, puis lis la correction.'},
+ {id:'simple',name:'Questions simples',desc:'Réponds en une phrase ou quelques mots.'},
+ {id:'def',name:'Définitions',desc:'Écris la définition d’un terme du cours.'},
+ {id:'trous',name:'Texte à trous',desc:'Complète les mots manquants.'},
+ {id:'assoc',name:'Associer',desc:'Relie notions, auteurs et idées.'},
+ {id:'refl',name:'Réflexion',desc:'Réponse développée, évaluée sur les points attendus.'},
+ {id:'mix',name:'Révision mixte',desc:'Un mélange de tous les modules, sauf la réflexion.'}
+];
+const MOD={}; MODS.forEach(m=>MOD[m.id]=m);
+const LEVELS=[
+ {n:1,name:'Facile',desc:'Reconnaître : définitions et repères de base.'},
+ {n:2,name:'Normal',desc:'Comprendre : relier idées, auteurs et notions.'},
+ {n:3,name:'Difficile',desc:'Distinguer : comparer et repérer les pièges.'},
+ {n:4,name:'Experte',desc:'Maîtriser : nuancer, critiquer, articuler les parties.'}
+];
+const COUNTS=[3,5,10,15,20];
+
+/* ---------- Stockage (facultatif) ---------- */
+const mem={};
+const store={
+ get(k,d){try{const v=localStorage.getItem(k);if(v!=null)return JSON.parse(v);}catch(e){} return (k in mem)?mem[k]:d;},
+ set(k,v){mem[k]=v;try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+};
+
+/* ---------- Banque ---------- */
+const ITEMS=[];
+(function build(){
+ for(const m in BANK){for(const l in BANK[m]){BANK[m][l].forEach((r,i)=>{
+  const secs=Array.isArray(r[0])?r[0]:[r[0]];
+  const o={id:m+l+'-'+i,m:m,l:+l,secs:secs};
+  if(m==='qcm'){o.q=r[1];o.ok=r[2];o.bad=r[3];o.e=r[4];}
+  else if(m==='vf'){o.q=r[1];o.a=r[2];o.e=r[3];}
+  else if(m==='simple'){o.q=r[1];o.a=r[2];o.k=r[3];o.need=r[4];}
+  else if(m==='def'){o.term=r[1];o.a=r[2];o.k=r[3];o.need=r[4];}
+  else if(m==='refl'){o.q=r[1];o.pts=r[2];o.a=r[3];}
+  else if(m==='trous'){o.text=r[1];o.ans=r[2];o.d=r[3]||[];}
+  else if(m==='assoc'){o.title=r[1];o.pairs=r[2];}
+  ITEMS.push(o);
+ });}}
+})();
+
+/* ---------- Utilitaires ---------- */
+const $app=document.getElementById('app');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const norm=s=>String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+const fmt=n=>(Math.round(n*10)/10).toString().replace('.',',');
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function lev(a,b){const m=a.length,n=b.length;if(!m)return n;if(!n)return m;let p=[];for(let j=0;j<=n;j++)p[j]=j;for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c;}return p[n];}
+function hasKw(text,kw){const t=' '+text+' ',k=norm(kw);if(!k)return false;return k.length<=4?t.indexOf(' '+k)>=0:t.indexOf(k)>=0;}
+function groupsMatched(text,groups){const t=norm(text);return groups.map(g=>g.some(k=>hasKw(t,k)));}
+function modItems(mod){return mod==='mix'?ITEMS.filter(i=>i.m!=='refl'):ITEMS.filter(i=>i.m===mod);}
+function secIdx(){return prefs.sel?IDX[prefs.sel]:-1;}
+function inRange(it){if(!prefs.sel)return false;if(prefs.only)return it.secs.indexOf(prefs.sel)>=0;const mx=IDX[prefs.sel];return it.secs.every(s=>IDX[s]<=mx);}
+function avail(mod,level){return modItems(mod).filter(i=>inRange(i)&&(level==null||i.l===level)).length;}
+function seenSet(){return new Set(store.get('nat_seen_v1',[]));}
+function rangeLabel(){if(!prefs.sel)return '';const s=SECTIONS[IDX[prefs.sel]];return (prefs.only?'Uniquement ':'Jusqu’à ')+(prefs.sel)+(prefs.only?'':' inclus');}
+function pagesFor(it){return it.secs.map(id=>SECTIONS[IDX[id]]);}
+
+/* ---------- État ---------- */
+let prefs=store.get('nat_prefs_v1',{sel:null,only:false});
+if(prefs.sel&&!(prefs.sel in IDX))prefs.sel=null;
+let view='home', setup={mod:null,level:2,n:10}, S=null, confirmReset=false;
+
+/* ---------- Tirage des questions ---------- */
+function pick(mod,level,n){
+ const seen=seenSet();
+ const all=modItems(mod).filter(inRange);
+ const dist=x=>Math.abs(x.l-level);
+ const byDist=arr=>{const g={};arr.forEach(x=>(g[dist(x)]=g[dist(x)]||[]).push(x));return Object.keys(g).sort((a,b)=>a-b).reduce((acc,k)=>acc.concat(shuffle(g[k])),[]);};
+ const same=all.filter(x=>x.l===level), other=all.filter(x=>x.l!==level);
+ const tiers=[
+  shuffle(same.filter(x=>!seen.has(x.id))),
+  byDist(other.filter(x=>!seen.has(x.id))),
+  shuffle(same.filter(x=>seen.has(x.id))),
+  byDist(other.filter(x=>seen.has(x.id)))
+ ];
+ const chosen=[];let otherLvl=0,again=0;
+ tiers.forEach((t,ti)=>{for(const x of t){if(chosen.length>=n)break;chosen.push(x);if(x.l!==level)otherLvl++;if(seen.has(x.id))again++;}});
+ return {items:shuffle(chosen),otherLvl:otherLvl,again:again,total:all.length};
+}
+function prepare(it){
+ const o=Object.assign({},it);
+ if(it.m==='qcm'){o.opts=shuffle([{t:it.ok,c:true}].concat(it.bad.map(b=>({t:b,c:false}))));}
+ if(it.m==='assoc'){o.rights=shuffle(it.pairs.map(p=>p[1]));}
+ if(it.m==='trous'){o.bank=shuffle(it.ans.map(a=>a[0]).concat(it.d));}
+ return o;
+}
+function startSeries(){
+ const p=pick(setup.mod,setup.level,setup.n);
+ S={mod:setup.mod,level:setup.level,n:p.items.length,req:setup.n,items:p.items.map(prepare),i:0,log:[],cur:null,sel:null,
+    otherLvl:p.otherLvl,again:p.again,quit:false,msg:''};
+ view='quiz';render();
+}
+
+/* ---------- Correction ---------- */
+function gradeText(it,txt){
+ const g=groupsMatched(txt,it.k);const got=g.filter(Boolean).length;
+ const need=it.need||(it.k.length<=2?it.k.length:Math.ceil(it.k.length*0.66));
+ let pts=0;if(txt.trim()){if(got>=need)pts=1;else if(got>0&&got>=need/2)pts=0.5;}
+ return {pts:pts,got:got,total:it.k.length};
+}
+function gradeBlank(user,alts){
+ const u=norm(user);if(!u)return false;
+ return alts.some(a=>{const n=norm(a);return u===n||(n.length>5&&lev(u,n)<=1)||(n.length>9&&lev(u,n)<=2);});
+}
+function collect(it){
+ if(it.m==='qcm'||it.m==='vf')return S.sel;
+ if(it.m==='simple'||it.m==='def'||it.m==='refl'){const e=document.getElementById('ans');return e?e.value:'';}
+ if(it.m==='trous')return it.ans.map((a,j)=>{const e=document.getElementById('b'+j);return e?e.value:'';});
+ if(it.m==='assoc')return it.pairs.map((p,j)=>{const e=document.getElementById('s'+j);return e?e.value:'';});
+}
+function grade(it,ans,idk){
+ const r={ans:ans,idk:!!idk,pts:0,over:false};
+ if(it.m==='qcm'){r.pts=(!idk&&ans!=null&&it.opts[ans].c)?1:0;}
+ else if(it.m==='vf'){r.pts=(!idk&&ans!=null&&ans===it.a)?1:0;}
+ else if(it.m==='simple'||it.m==='def'){const g=gradeText(it,idk?'':ans);r.pts=g.pts;r.got=g.got;r.total=g.total;r.over=true;}
+ else if(it.m==='trous'){r.ok=it.ans.map((a,j)=>!idk&&gradeBlank(ans[j],a));r.pts=r.ok.filter(Boolean).length/it.ans.length;r.over=true;}
+ else if(it.m==='assoc'){r.ok=it.pairs.map((p,j)=>!idk&&ans[j]===p[1]);r.pts=r.ok.filter(Boolean).length/it.pairs.length;}
+ else if(it.m==='refl'){const g=idk?it.pts.map(()=>false):groupsMatched(ans,it.pts.map(p=>p[1]));r.checks=g;r.pts=g.filter(Boolean).length/it.pts.length;}
+ return r;
+}
+function markSeen(it){const s=seenSet();s.add(it.id);store.set('nat_seen_v1',Array.from(s));}
+function curPts(){return S.log.reduce((a,l)=>a+l.pts,0)+(S.cur?S.cur.pts:0);}
+function answeredCount(){return S.log.length+(S.cur?1:0);}
+
+/* ---------- Rendu : accueil ---------- */
+function stripHTML(){
+ const mx=secIdx();
+ return '<div class="strip" role="group" aria-label="Parties du cours">'+SECTIONS.map((s,i)=>{
+  let c='';if(prefs.sel){if(prefs.only){if(i===mx)c='end';}else{if(i<mx)c='in';else if(i===mx)c='end';}}
+  return '<button class="'+c+'" data-act="sec" data-v="'+s.id+'" title="'+esc(s.id+' '+s.n)+'" aria-label="'+esc('Partie '+s.id+' : '+s.n)+'">'+s.id+'</button>';
+ }).join('')+'</div>';
+}
+function selectHTML(){
+ let h='<select class="sel" id="selSec" data-act="selchange" aria-label="Jusqu’où as-tu révisé ?"><option value="">Choisis une partie du cours…</option>';
+ let g='';SECTIONS.forEach(s=>{if(s.g!==g){if(g)h+='</optgroup>';h+='<optgroup label="'+esc(s.g)+'">';g=s.g;}
+  h+='<option value="'+s.id+'"'+(prefs.sel===s.id?' selected':'')+'>'+esc(s.id+' — '+s.n)+'</option>';});
+ return h+'</optgroup></select>';
+}
+function renderHome(){
+ const seen=seenSet();
+ const total=ITEMS.length;
+ let h='<div class="top"><div class="eyebrow">Philosophie · La nature</div><h1>Réviser le cours</h1><p>Choisis jusqu’où tu as révisé, puis un module. Les questions sont tirées de ton cours et ne se répètent pas d’une série à l’autre.</p></div>';
+ h+='<section class="card step"><h2>Jusqu’où as-tu révisé ?</h2>'+selectHTML();
+ h+='<div class="seg" role="group" aria-label="Plage de révision"><button data-act="only" data-v="0" aria-pressed="'+(!prefs.only)+'">Jusqu’à cette partie</button><button data-act="only" data-v="1" aria-pressed="'+prefs.only+'">Uniquement cette partie</button></div>';
+ h+=stripHTML();
+ h+='<p class="legend">'+(prefs.sel?(prefs.only?'Questions sur la partie '+prefs.sel+' uniquement.':'Questions sur les parties de l’introduction jusqu’à '+prefs.sel+' incluse.'):'Touche une partie ci-dessus ou utilise la liste pour commencer.')+'</p></section>';
+ h+='<h2 class="sect">Choisis un module</h2><div class="grid">';
+ const hist=store.get('nat_hist_v1',{});
+ MODS.forEach(m=>{
+  const n=prefs.sel?avail(m.id):0;
+  const last=hist[m.id];
+  h+='<button class="mod" data-act="mod" data-v="'+m.id+'"'+(n?'':' disabled')+'><b>'+esc(m.name)+'</b><span class="d">'+esc(m.desc)+'</span><span class="m"><span>'+(prefs.sel?(n?n+' questions':'Aucune question ici'):'Choisis une partie')+'</span>'+(last?'<span>Dernier : '+fmt(last.pts)+'/'+last.n+' · '+esc(LEVELS[last.level-1].name)+'</span>':'')+'</span></button>';
+ });
+ h+='</div>';
+ h+='<div class="foot">Questions déjà vues : <b>'+seen.size+'</b> sur '+total+'. ';
+ if(confirmReset){h+='<span class="row" style="display:inline-flex;margin-left:6px"><span>Tout remettre à zéro ?</span><button class="btn sm" data-act="reset-yes">Oui, réinitialiser</button><button class="btn sm ghost" data-act="reset-no">Annuler</button></span>';}
+ else h+='<button class="btn sm ghost" data-act="reset-ask">Réinitialiser l’historique</button>';
+ h+='</div>';
+ $app.innerHTML=h;
+}
+
+/* ---------- Rendu : réglages ---------- */
+function renderSetup(){
+ const m=MOD[setup.mod];const tot=avail(setup.mod);
+ if(setup.n>tot){setup.n=COUNTS.filter(c=>c<=tot).pop()||tot;}
+ const seen=seenSet();
+ const poolSeen=modItems(setup.mod).filter(i=>inRange(i)&&seen.has(i.id)).length;
+ let h='<div class="setup"><div class="top" style="padding-bottom:8px"><button class="back" data-act="home">← Accueil</button><div class="eyebrow">Module</div><h1>'+esc(m.name)+'</h1><p>'+esc(m.desc)+'</p></div>';
+ h+='<section class="card"><h3>Partie du cours</h3><div class="row" style="justify-content:space-between"><span><b>'+esc(rangeLabel())+'</b> <span class="muted">· '+tot+' questions disponibles</span></span><button class="btn sm" data-act="home">Modifier</button></div></section>';
+ h+='<section class="card"><h3>Niveau</h3><div class="lvls">'+LEVELS.map(l=>{const n=avail(setup.mod,l.n);return '<button class="lvl" data-act="level" data-v="'+l.n+'" aria-pressed="'+(setup.level===l.n)+'"><b><span class="dot l'+l.n+'"></span>'+l.name+'</b><small>'+esc(l.desc)+'</small><small>'+n+' question'+(n>1?'s':'')+'</small></button>';}).join('')+'</div></section>';
+ h+='<section class="card"><h3>Nombre de questions</h3><div class="chips">'+COUNTS.map(c=>'<button class="chip" data-act="count" data-v="'+c+'" aria-pressed="'+(setup.n===c)+'"'+(c>tot?' disabled':'')+'>'+c+'</button>').join('')+'</div>';
+ let note=tot+' questions existent pour ce module dans cette plage';
+ const sameN=avail(setup.mod,setup.level);
+ if(setup.n>sameN)note+=' · seulement '+sameN+' au niveau '+LEVELS[setup.level-1].name+' : le reste viendra des niveaux voisins';
+ note+='. '+poolSeen+' déjà vue'+(poolSeen>1?'s':'')+'.';
+ h+='<p class="note">'+esc(note)+'</p></section>';
+ h+='<div class="actions"><span></span><button class="btn primary" data-act="start"'+(tot?'':' disabled')+'>Démarrer la série de '+Math.min(setup.n,tot)+'</button></div></div>';
+ $app.innerHTML=h;
+}
+
+/* ---------- Rendu : quiz ---------- */
+function barHTML(){
+ const done=S.log.length+(S.cur?1:0);
+ let h='<header class="qbar"><div class="line1"><button class="btn sm" data-act="quit">✕ Quitter le module</button><div class="qmeta"><span>'+esc(MOD[S.mod].name)+'</span><span class="dot l'+S.level+'"></span><span>'+LEVELS[S.level-1].name+'</span></div><div class="score" aria-live="polite">Score : '+fmt(curPts())+' / '+done+'</div></div>';
+ h+='<div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="'+S.n+'" aria-valuenow="'+done+'"><i style="width:'+(done/S.n*100)+'%"></i></div>';
+ if(S.quit){h+='<div class="confirm" role="alert"><p><b>Quitter ce module ?</b> La série en cours est abandonnée et son score est remis à zéro.</p><div class="row"><button class="btn sm primary" data-act="quit-yes">Quitter et revenir à l’accueil</button><button class="btn sm" data-act="quit-no">Continuer la série</button></div></div>';}
+ return h+'</header>';
+}
+function secTags(it){return it.secs.map(s=>'<span class="tag">§ '+s+'</span>').join('');}
+function questionText(it){
+ if(it.m==='qcm'||it.m==='simple'||it.m==='refl')return esc(it.q);
+ if(it.m==='vf')return '<span class="muted" style="font-size:.9rem;font-family:var(--font-ui)">Vrai ou faux ?</span><br>'+esc(it.q);
+ if(it.m==='def')return 'Définis : <b>'+esc(it.term)+'</b>';
+ if(it.m==='trous')return '<span class="muted" style="font-size:.9rem;font-family:var(--font-ui)">Complète le texte.</span>';
+ if(it.m==='assoc')return esc(it.title);
+}
+function askBody(it){
+ if(it.m==='qcm')return '<div class="opts">'+it.opts.map((o,i)=>'<button class="opt" data-act="pick" data-v="'+i+'" aria-pressed="'+(S.sel===i)+'"><span class="k">'+'ABCD'[i]+'</span><span>'+esc(o.t)+'</span></button>').join('')+'</div>';
+ if(it.m==='vf')return '<div class="opts vf"><button class="opt" data-act="pick" data-v="true" aria-pressed="'+(S.sel===true)+'">Vrai</button><button class="opt" data-act="pick" data-v="false" aria-pressed="'+(S.sel===false)+'">Faux</button></div>';
+ if(it.m==='simple')return '<label class="sr" for="ans">Ta réponse</label><input class="ans" id="ans" type="text" autocomplete="off" placeholder="Ta réponse…">';
+ if(it.m==='def')return '<label class="sr" for="ans">Ta définition</label><textarea class="ans" id="ans" placeholder="Écris la définition avec tes mots…"></textarea>';
+ if(it.m==='refl')return '<label class="sr" for="ans">Ta réponse développée</label><textarea class="ans" id="ans" style="min-height:190px" placeholder="Développe ta réponse en quelques phrases, avec les notions et les auteurs du cours…"></textarea>';
+ if(it.m==='trous'){
+  const parts=it.text.split('{}');let h='<p class="cloze">';
+  parts.forEach((p,i)=>{h+=esc(p);if(i<parts.length-1){const w=Math.max(6,Math.max.apply(null,it.ans[i].map(a=>a.length))+2);h+='<input class="blank" id="b'+i+'" data-i="'+i+'" style="width:'+w+'ch" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Trou '+(i+1)+'">';}});
+  h+='</p>';
+  if(it.l===1&&it.bank.length)h+='<div class="muted" style="font-size:.85rem">Banque de mots (touche pour remplir le prochain trou)</div><div class="bank">'+it.bank.map(w=>'<button type="button" data-act="chip" data-v="'+esc(w)+'">'+esc(w)+'</button>').join('')+'</div>';
+  return h;
+ }
+ if(it.m==='assoc')return '<div class="pairs">'+it.pairs.map((p,j)=>'<div class="pair"><span class="l">'+esc(p[0])+'</span><select id="s'+j+'" aria-label="Correspondance pour '+esc(p[0])+'"><option value="">Choisis…</option>'+it.rights.map(r=>'<option value="'+esc(r)+'">'+esc(r)+'</option>').join('')+'</select></div>').join('')+'</div>';
+}
+function revHTML(it,pts){
+ if(pts>=1)return '';
+ return '<div class="rev"><h4>À revoir dans le cours</h4><ul>'+pagesFor(it).map(s=>'<li><span class="pg">§ '+s.id+' · '+s.p+'</span><span>'+esc(s.n)+'</span></li>').join('')+'</ul></div>';
+}
+function statusHTML(pts){
+ if(pts>=1)return '<div class="fb ok"><div class="st">✓ Correct</div></div>';
+ if(pts>0)return '<div class="fb mid"><div class="st">◐ Partiel · '+fmt(pts)+' point</div></div>';
+ return '<div class="fb ko"><div class="st">✕ Incorrect</div></div>';
+}
+function overrideHTML(c){
+ const v=c.pts;
+ const b=(x,t)=>'<button data-act="over" data-v="'+x+'" aria-pressed="'+(v===x)+'">'+t+'</button>';
+ return '<div class="override"><span class="muted">Ta correction :</span><div class="seg">'+b(1,'Juste')+b(0.5,'Partiel')+b(0,'Faux')+'</div></div>';
+}
+function doneBody(it){
+ const c=S.cur,r=c;let h='';
+ if(it.m==='qcm'){
+  h+='<div class="opts">'+it.opts.map((o,i)=>{let cl='opt';if(o.c)cl+=' good';else if(r.ans===i)cl+=' bad';return '<button class="'+cl+'" disabled><span class="k">'+'ABCD'[i]+'</span><span>'+esc(o.t)+(o.c?' ✓':(r.ans===i?' ✕':''))+'</span></button>';}).join('')+'</div>';
+  h+=statusHTML(c.pts);
+  h+='<div class="corr"><h4>Correction</h4><p><b>Bonne réponse :</b> '+esc(it.ok)+'</p><p>'+esc(it.e)+'</p></div>';
+ }else if(it.m==='vf'){
+  h+='<div class="opts vf">'+[true,false].map(v=>{let cl='opt';if(it.a===v)cl+=' good';else if(r.ans===v)cl+=' bad';return '<button class="'+cl+'" disabled>'+(v?'Vrai':'Faux')+(it.a===v?' ✓':(r.ans===v?' ✕':''))+'</button>';}).join('')+'</div>';
+  h+=statusHTML(c.pts);
+  h+='<div class="corr"><h4>Correction</h4><p><b>C’était '+(it.a?'vrai':'faux')+'.</b></p><p>'+esc(it.e)+'</p></div>';
+ }else if(it.m==='simple'||it.m==='def'){
+  h+='<div class="mine">'+(r.idk?'<span class="muted">Tu as passé cette question.</span>':(esc(r.ans)||'<span class="muted">(vide)</span>'))+'</div>';
+  h+=statusHTML(c.pts);
+  h+='<div class="corr"><h4>Réponse attendue</h4><p>'+esc(it.a)+'</p>'+(r.idk?'':'<p class="muted" style="font-size:.88rem">Idées clés retrouvées dans ta réponse : '+r.got+' sur '+r.total+'.</p>')+'</div>';
+  h+=overrideHTML(c);
+ }else if(it.m==='trous'){
+  const parts=it.text.split('{}');let t='<p class="cloze">';
+  parts.forEach((p,i)=>{t+=esc(p);if(i<parts.length-1){const ok=r.ok[i];const u=r.ans[i];t+='<span class="'+(ok?'blank-ok':'blank-bad')+'">'+(esc(u)||'…')+'</span>'+(ok?'':' <span class="fix">→ '+esc(it.ans[i][0])+'</span>')+'';}});
+  h+=t+'</p>'+statusHTML(c.pts)+overrideHTML(c);
+ }else if(it.m==='assoc'){
+  h+='<div class="pairs">'+it.pairs.map((p,j)=>'<div class="pair"><span class="l">'+esc(p[0])+'</span><select disabled class="'+(r.ok[j]?'good':'bad')+'"><option>'+(esc(r.ans[j])||'(sans réponse)')+'</option></select>'+(r.ok[j]?'':'<span class="ok">Bonne association : '+esc(p[1])+'</span>')+'</div>').join('')+'</div>';
+  h+=statusHTML(c.pts);
+ }else if(it.m==='refl'){
+  h+='<div class="mine">'+(r.idk?'<span class="muted">Tu as passé cette question.</span>':(esc(r.ans)||'<span class="muted">(vide)</span>'))+'</div>';
+  h+=statusHTML(c.pts);
+  h+='<div class="corr"><h4>Points attendus : coche ceux que ta réponse contient</h4><div class="checks">'+it.pts.map((p,k)=>'<label><input type="checkbox" data-act="chk" data-k="'+k+'"'+(r.checks[k]?' checked':'')+'><span>'+esc(p[0])+'</span></label>').join('')+'</div><p class="muted" style="font-size:.85rem;margin-top:.7rem">Les cases sont pré-cochées d’après les mots-clés trouvés dans ta réponse. Corrige-les si besoin.</p></div>';
+  h+='<div class="corr"><h4>Réponse modèle</h4><p>'+esc(it.a)+'</p></div>';
+ }
+ h+=revHTML(it,c.pts);
+ return h;
+}
+function renderQuiz(){
+ const it=S.items[S.i];const done=!!S.cur;
+ let h=barHTML();
+ if(S.i===0&&!done&&(S.otherLvl||S.again||S.n<S.req)){
+  const parts=[];if(S.n<S.req)parts.push('Il n’existe que '+S.n+' questions pour ce réglage.');
+  if(S.otherLvl)parts.push(S.otherLvl+' question'+(S.otherLvl>1?'s viennent':' vient')+' d’un niveau voisin, faute de questions inédites ou assez nombreuses au niveau choisi.');
+  if(S.again)parts.push(S.again+' question'+(S.again>1?'s ont':' a')+' déjà été vue'+(S.again>1?'s':'')+' : tu as épuisé les inédites.');
+  h+='<div class="banner" style="margin-top:12px">'+esc(parts.join(' '))+'</div>';
+ }
+ h+='<article class="card q"><div class="qhead"><span class="eyebrow">Question '+(S.i+1)+' sur '+S.n+'</span>'+secTags(it)+'</div><h2 class="qtext">'+questionText(it)+'</h2>';
+ if(!done){
+  h+=askBody(it);
+  h+='<div id="hint" class="hint" role="alert"></div><div class="actions"><button class="btn ghost" data-act="idk">Je ne sais pas</button><button class="btn primary" data-act="validate">Valider</button></div>';
+ }else{
+  h+=doneBody(it);
+  h+='<div class="actions"><span></span><button class="btn primary" id="next" data-act="next">'+(S.i+1>=S.n?'Voir mon résultat':'Question suivante')+'</button></div>';
+ }
+ h+='</article>';
+ $app.innerHTML=h;
+ window.scrollTo(0,0);
+ if(done){const n=document.getElementById('next');if(n)n.focus({preventScroll:true});}
+ else{const f=document.querySelector('#ans,.blank');if(f)f.focus({preventScroll:true});}
+}
+function validate(idk){
+ const it=S.items[S.i];
+ let ans=collect(it);
+ if(!idk){
+  let empty=false;
+  if(it.m==='qcm'||it.m==='vf')empty=(ans==null);
+  else if(it.m==='trous')empty=ans.every(a=>!a.trim());
+  else if(it.m==='assoc')empty=ans.every(a=>!a);
+  else empty=!String(ans).trim();
+  if(empty){const hh=document.getElementById('hint');if(hh)hh.textContent=(it.m==='qcm'||it.m==='vf')?'Choisis une réponse, ou clique sur « Je ne sais pas ».':'Réponds d’abord, ou clique sur « Je ne sais pas ».';return;}
+ }
+ S.cur=grade(it,ans,idk);
+ markSeen(it);
+ renderQuiz();
+}
+function next(){
+ const it=S.items[S.i];
+ S.log.push({it:it,pts:S.cur.pts,ans:S.cur.ans,idk:S.cur.idk});
+ S.cur=null;S.sel=null;S.i++;
+ if(S.i>=S.n){finish();}else renderQuiz();
+}
+function finish(){
+ const pts=curPts();
+ const hist=store.get('nat_hist_v1',{});hist[S.mod]={pts:pts,n:S.n,level:S.level,at:Date.now()};store.set('nat_hist_v1',hist);
+ view='results';render();
+}
+
+/* ---------- Rendu : résultats ---------- */
+function correctText(it){
+ if(it.m==='qcm')return '<p><b>Bonne réponse :</b> '+esc(it.ok)+'</p><p>'+esc(it.e)+'</p>';
+ if(it.m==='vf')return '<p><b>C’était '+(it.a?'vrai':'faux')+'.</b></p><p>'+esc(it.e)+'</p>';
+ if(it.m==='simple'||it.m==='def'||it.m==='refl')return '<p>'+esc(it.a)+'</p>';
+ if(it.m==='trous'){const parts=it.text.split('{}');let t='';parts.forEach((p,i)=>{t+=esc(p);if(i<parts.length-1)t+='<b>'+esc(it.ans[i][0])+'</b>';});return '<p>'+t+'</p>';}
+ if(it.m==='assoc')return '<p>'+it.pairs.map(p=>esc(p[0])+' → <b>'+esc(p[1])+'</b>').join('<br>')+'</p>';
+}
+function plainQ(it){
+ if(it.m==='def')return 'Définis : '+it.term;
+ if(it.m==='trous')return it.text.replace(/\{\}/g,'…');
+ if(it.m==='assoc')return it.title;
+ return it.q;
+}
+function renderResults(){
+ const pts=curPts();const pct=Math.round(pts/S.n*100);
+ let msg=pct>=90?'Excellent, la partie est bien maîtrisée.':pct>=70?'Solide. Reprends les points ci-dessous pour consolider.':pct>=50?'À consolider : relis les passages signalés.':'À retravailler : repars du cours sur les passages ci-dessous.';
+ const miss=S.log.filter(l=>l.pts<1);
+ const w={};miss.forEach(l=>l.it.secs.forEach(s=>{w[s]=(w[s]||0)+(1-l.pts);}));
+ const order=Object.keys(w).sort((a,b)=>w[b]-w[a]||IDX[a]-IDX[b]);
+ const unseen=modItems(S.mod).filter(i=>inRange(i)&&!seenSet().has(i.id)).length;
+ let h='<div class="top" style="padding-bottom:10px"><div class="eyebrow">'+esc(MOD[S.mod].name)+' · '+LEVELS[S.level-1].name+' · '+esc(rangeLabel())+'</div><h1>Fin de la série</h1></div>';
+ h+='<section class="card res"><div class="big">'+fmt(pts)+'<small> / '+S.n+'</small></div><div class="bar"><i style="width:'+pct+'%"></i></div><p><b>'+pct+' %</b> · '+esc(msg)+'</p></section>';
+ if(order.length){
+  h+='<section class="card todo"><h3 style="font-size:1rem">Où réviser en priorité</h3><ul>'+order.map(id=>{const s=SECTIONS[IDX[id]];const c=miss.filter(l=>l.it.secs.indexOf(id)>=0).length;return '<li><span class="cnt">'+c+' erreur'+(c>1?'s':'')+'</span><b>§ '+id+' · '+s.p+'</b><span>'+esc(s.n)+'</span></li>';}).join('')+'</ul></section>';
+  h+='<h2 class="sect">Tes erreurs corrigées</h2>'+miss.map(l=>'<details class="miss"><summary><span>'+esc(plainQ(l.it))+'</span><span class="tag">'+(l.pts>0?'partiel':'faux')+'</span></summary><div class="in">'+correctText(l.it)+'<p class="muted" style="font-size:.88rem">À revoir : '+pagesFor(l.it).map(s=>'§ '+s.id+' ('+s.p+')').join(', ')+'</p></div></details>').join('');
+ }else h+='<p class="note" style="text-align:center">Aucune erreur sur cette série.</p>';
+ h+='<p class="note" style="margin-top:18px">'+(unseen>0?'Il reste '+unseen+' question'+(unseen>1?'s':'')+' inédite'+(unseen>1?'s':'')+' pour ce réglage.':'Tu as vu toutes les questions de ce réglage : certaines reviendront.')+'</p>';
+ h+='<div class="actions" style="justify-content:flex-start"><button class="btn primary" data-act="again">↻ Nouvelles questions</button><button class="btn" data-act="settings">Changer les réglages</button><button class="btn ghost" data-act="home">Accueil</button></div>';
+ $app.innerHTML=h;window.scrollTo(0,0);
+}
+
+function render(){
+ if(view==='home')renderHome();else if(view==='setup')renderSetup();else if(view==='quiz')renderQuiz();else renderResults();
+ if(view!=='quiz'&&view!=='results')window.scrollTo(0,0);
+}
+
+/* ---------- Événements ---------- */
+function savePrefs(){store.set('nat_prefs_v1',prefs);}
+$app.addEventListener('click',function(e){
+ const t=e.target.closest('[data-act]');if(!t||t.disabled)return;
+ const a=t.getAttribute('data-act'),v=t.getAttribute('data-v');
+ switch(a){
+  case 'sec':prefs.sel=v;savePrefs();renderHome();break;
+  case 'only':prefs.only=v==='1';savePrefs();renderHome();break;
+  case 'mod':if(!prefs.sel)return;setup.mod=v;setup.n=Math.min(setup.n,avail(v))||setup.n;view='setup';render();break;
+  case 'level':setup.level=+v;renderSetup();break;
+  case 'count':setup.n=+v;renderSetup();break;
+  case 'start':startSeries();break;
+  case 'home':S=null;view='home';render();break;
+  case 'reset-ask':confirmReset=true;renderHome();break;
+  case 'reset-no':confirmReset=false;renderHome();break;
+  case 'reset-yes':store.set('nat_seen_v1',[]);store.set('nat_hist_v1',{});confirmReset=false;renderHome();break;
+  case 'pick':S.sel=(v==='true')?true:(v==='false')?false:+v;
+   document.querySelectorAll('.opt').forEach(b=>b.setAttribute('aria-pressed',String(b===t)));break;
+  case 'chip':{const b=Array.from(document.querySelectorAll('.blank')).find(i=>!i.value.trim())||document.querySelector('.blank:last-of-type');if(b){b.value=v;b.focus();}break;}
+  case 'validate':validate(false);break;
+  case 'idk':validate(true);break;
+  case 'over':S.cur.pts=+v;renderQuiz();break;
+  case 'next':next();break;
+  case 'quit':if(!S.log.length&&!S.cur){S=null;view='home';render();}else{S.quit=true;renderQuiz();}break;
+  case 'quit-no':S.quit=false;renderQuiz();break;
+  case 'quit-yes':S=null;view='home';render();break;
+  case 'again':startSeries();break;
+  case 'settings':setup.mod=S.mod;setup.level=S.level;setup.n=S.req;view='setup';render();break;
+ }
+});
+$app.addEventListener('change',function(e){
+ const t=e.target;
+ if(t.id==='selSec'){prefs.sel=t.value||null;savePrefs();renderHome();}
+ if(t.getAttribute&&t.getAttribute('data-act')==='chk'&&S&&S.cur){
+  const it=S.items[S.i];S.cur.checks[+t.getAttribute('data-k')]=t.checked;
+  S.cur.pts=S.cur.checks.filter(Boolean).length/it.pts.length;renderQuiz();
+ }
+});
+$app.addEventListener('keydown',function(e){
+ if(e.key==='Enter'&&view==='quiz'&&S&&!S.cur){
+  const t=e.target;
+  if(t.tagName==='INPUT'&&(t.id==='ans'||t.classList.contains('blank'))){e.preventDefault();validate(false);}
+  else if(t.tagName==='TEXTAREA'&&(e.ctrlKey||e.metaKey)){e.preventDefault();validate(false);}
+ }
+});
+
+/* Lien vers les tests : état lisible depuis la page */
+window.__rev={items:ITEMS,sections:SECTIONS,cur:function(){return S&&S.items[S.i];}};
+render();
+})();
+</script>
+
+</body></html>
